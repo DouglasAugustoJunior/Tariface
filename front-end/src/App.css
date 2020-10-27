@@ -1,0 +1,17 @@
+:root {
+  --background: #F0F0F7;
+  --primary: #A0C4FF;
+  --secondary-red: #FFADAD;
+  --secondary-green: #95f882;
+}
+
+* {
+  margin: 0px;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+body {
+  background: linear-gradient(to bottom right, #F0F0F7 , #A0C4FF);
+  height: 100vh;
+}

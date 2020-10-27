@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>ReconhecimentoFacialPersonGroupConsole</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AspNet_UploadImagem\**" />
+    <Compile Remove="DeteccaoFacialComURLImagemConsole\**" />
+    <Compile Remove="DetectaRostoImagemDetalhesFaceAPI\**" />
+    <EmbeddedResource Remove="AspNet_UploadImagem\**" />
+    <EmbeddedResource Remove="DeteccaoFacialComURLImagemConsole\**" />
+    <EmbeddedResource Remove="DetectaRostoImagemDetalhesFaceAPI\**" />
+    <None Remove="AspNet_UploadImagem\**" />
+    <None Remove="DeteccaoFacialComURLImagemConsole\**" />
+    <None Remove="DetectaRostoImagemDetalhesFaceAPI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.Face" Version="2.6.0-preview.1" />
+  </ItemGroup>
+
+</Project>
