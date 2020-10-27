@@ -1,5 +1,5 @@
 :root {
-  --background: #F0F0F7;
+  --background: #f2f3f7;
   --primary: #A0C4FF;
   --secondary-red: #FFADAD;
   --secondary-green: #95f882;
@@ -12,6 +12,23 @@
 }
 
 body {
-  background: linear-gradient(to bottom right, #F0F0F7 , #A0C4FF);
-  height: 100vh;
+  /* background: var(--background) !important; */
+  background: #343a40 !important;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.rs-picker-input {
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rs-input {
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rs-picker-date {
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
 }

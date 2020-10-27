@@ -3,13 +3,72 @@
     align-items: center;
     justify-content: center;
     padding: 50px 50px;
+    font-family: Kufam, cursive;
 }
 
-#form-register{
+#form-container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fffffc;
+    width: 70%;
+    padding: 30px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+#form-container h1 {
+    color: #073b4c;
+    margin-bottom: 20px;
+}
+
+.field-photo {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    flex-wrap: wrap;
-    width: 100%;
+    margin-top: 20px;
+}
 
+/* .validade-cartao {
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+} */
+
+#register-container input {
+    margin-bottom: 20px;
+    width: 250px;
+}
+
+.group-form-butoes {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.group-form-butoes  a, .group-form-butoes  button {
+    text-decoration: none;
+    color: white;
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px 0px;
+    margin: 0px 100px;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.group-form-butoes  a:hover, .group-form-butoes  button:hover {
+    color: white;
+    box-shadow: 4px 4px rgba(0, 0, 0, 0.5);
+    transition: 0.2s;
+}
+
+.group-form-butoes  button.bnt-confirm {
+    background-color: var(--primary);
+}
+
+.group-form-butoes a.cancel-register {
+    background-color: var(--secondary-red);
 }

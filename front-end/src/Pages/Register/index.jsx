@@ -1,102 +1,205 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import { Form, FormGroup, FormControl, ControlLabel, SelectPicker } from 'rsuite';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import FormatMask from '../../Utils/FormatMask';
+import api from '../../api';
+import { Form, Col, ControlLabel, Grid, Row, DatePicker, Button, Input, InputPicker, StringType } from 'rsuite';
+import { format } from 'date-fns';
+import SimpleDropzone from '../../components/SimpleDropzone';
 import 'rsuite/dist/styles/rsuite-default.css';
 import './styles.css';
 
 export default function Register() {
-   
+
+    const [foto, setFoto] = useState();
+    const [nome, setNome] = useState();
+    const [cpf, setCpf] = useState();
+    const [senha, setSenha] = useState();
+    const [confSenha, setConfSenha] = useState();
+    const [email, setEmail] = useState();
+    const [endereco, setEndereco] = useState();
+    const [numeroCasa, setNumeroCasa] = useState();
+    const [complemento, setComplemento] = useState();
+    const [cep, setCep] = useState();
+    const [municipio, setMunicipio] = useState();
+    const [idMunicipio, setIdMunicipio] = useState();
+    const [uf, setUf] = useState();
+    const [idUf, setIdUf] = useState();
+    const [titularCartao, setTitularCartao] = useState();
+    const [numeroCartao, setNumeroCartao] = useState();
+    const [validadeCartao, setValidadeCartao] = useState();
+    const [csvCartao, setCsvCartao] = useState();
+
+
+    useEffect(() => {
+        api.get('uf')
+        .then(response => {
+            const getUf = response.data;
+            setUf(getUf);
+        });
+    }, []);
+
+    useEffect(() => {
+        if(idUf){
+            api.get(`municipio/filtroUF?idUf=${idUf}`)
+            .then(response => {
+                const getmunicipio = response.data;
+                setMunicipio(getmunicipio);
+            });
+        }
+    }, [idUf]);
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const enviarFoto = new FormData();
+        enviarFoto.append('arquivo', foto);
+        const data = {
+            "nome": nome, 
+            "cpf": cpf && cpf.replace(/[^\d]+/g, ""),
+            "saldo": 0,
+            "email": email,
+            "senha": senha,
+            "endereco": {
+                "logradouro": endereco,
+                "numero": numeroCasa,
+                "cep": cep && cep.replace(/[^\d]+/g, ""),
+                "municipioId": idMunicipio,
+                "complemento": complemento,
+            },
+            "cartoes": [{
+                "numero": numeroCartao && numeroCartao.replace(/[^\d]+/g, ""),
+                "titular": titularCartao,
+                "validade": validadeCartao,
+                "csv": csvCartao
+            }]
+        }
+
+        try {
+            await api.post('usuario/cadastrarUsuario', data)
+            .then(async (resp) => {
+                const id = resp.request.response;
+                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto);
+                alert(`Usuario com ID ${id} foi cadastrado com sucesso.`);
+            });
+        } catch (error) {
+            alert(`${error}`);
+        }
+    }
+
     return (
         <div id="register-container">
-            <Form id="form-register">
-                <FormGroup>
-                    <FormGroup>
-                        <ControlLabel>Nome Completo</ControlLabel>
-                        <FormControl name="fullName" type="text" />
-                    </FormGroup>
+            <div id="form-container">
+                <h1>TariFace</h1>
+                <Form id="form-register" onSubmit={handleSubmit} >
+                    <Grid fluid>
+                        <Row className="show-row">
+                            <Col xs={6} className="show-col field-photo">
+                                <SimpleDropzone onFileUpload={setFoto}/>
+                                <p>Foto de perfil</p>
+                            </Col>
 
-                    <FormGroup>
-                        <ControlLabel>CPF</ControlLabel>
-                        <FormControl name="cpf" type="text" />
-                    </FormGroup>
+                            <Col xs={18} className="show-col">
+                                <Row className="show-row">
+                                    <Col xs={24} className="show-col">
+                                        <p>Nome Completo:</p>
+                                        <Input style={{ width: 470 }} name="nome" type="text" onChange={value => setNome(value)}/>
+                                    </Col>
+                                </Row>
 
-                    <FormGroup>
-                        <ControlLabel>E-mail</ControlLabel>
-                        <FormControl name="email" type="email" />
-                    </FormGroup>
+                                <Row className="show-row" gutter={16}>
+                                    <Col xs={12} className="show-col">
+                                        <ControlLabel>CPF:</ControlLabel>
+                                        <Input style={{ width: 220 }} id="cpf" onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
+                                    </Col>
 
-                    <FormGroup>
-                        <ControlLabel>Senha</ControlLabel>
-                        <FormControl name="password" type="password" />
-                    </FormGroup>
+                                    <Col xs={12} className="show-col">
+                                        <ControlLabel>E-mail:</ControlLabel>
+                                        <Input style={{ width: 220 }} name="email" type="email" onChange={value => setEmail(value)}/>
+                                    </Col>
+                                </Row>
 
-                    <FormGroup>
-                        <ControlLabel>Confirmar Senha</ControlLabel>
-                        <FormControl name="okPassword" type="password" />
-                    </FormGroup>
-                </FormGroup>
+                                <Row className="show-row" gutter={16}>
+                                    <Col xs={12} className="show-col">
+                                        <ControlLabel>Senha:</ControlLabel>
+                                        <Input style={{ width: 220 }} name="senha" type="password" onChange={value => setSenha(value)}/>
+                                    </Col>
 
-                <FormGroup>
-                    <FormGroup>
-                        <ControlLabel>Logradouro</ControlLabel>
-                        <FormControl name="adrres" type="text" />
-                    </FormGroup>
+                                    <Col xs={12} className="show-col">
+                                        <ControlLabel>Confirmar Senha:</ControlLabel>
+                                        <Input style={{ width: 220 }} type="password"/>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
 
-                    <FormGroup>
-                        <ControlLabel>Numero</ControlLabel>
-                        <FormControl name="number" type="text" />
-                    </FormGroup>
+                        <Row className="show-row">
+                            <Row className="show-row">
+                                <Col xs={10} className="show-col">
+                                    <ControlLabel>Endereço:</ControlLabel>
+                                    <Input type="text" onChange={value => setEndereco(value)}/>
+                                </Col>
 
-                    <FormGroup>
-                        <ControlLabel>Bairro</ControlLabel>
-                        <FormControl name="bairro" type="text" />
-                    </FormGroup>
+                                <Col xs={4} className="show-col">
+                                    <ControlLabel>Numero:</ControlLabel>
+                                    <Input style={{ width: 100 }} type="number" onChange={value => setNumeroCasa(value)}/>
+                                </Col>
 
-                    <FormGroup>
-                        <ControlLabel>CEP</ControlLabel>
-                        <FormControl name="cep" type="text" />
-                    </FormGroup>
+                                <Col xs={10} className="show-col">
+                                    <ControlLabel>Complemento:</ControlLabel>
+                                    <Input type="text" onChange={value => setComplemento(value)}/>
+                                </Col>
+                            </Row>
 
-                    <FormGroup>
-                        <ControlLabel>Cidade</ControlLabel>
-                        <FormControl name="city" type="text" />
-                    </FormGroup>
+                            <Row className="show-row" gutter={25}>
+                                <Col xs={4} className="show-col">
+                                    <ControlLabel>CEP:</ControlLabel>
+                                    <Input type="text" style={{ width: 100 }} id="cep" onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
+                                </Col>
 
-                    <FormGroup>
-                        <ControlLabel>Estado</ControlLabel>
-                        <SelectPicker />
-                    </FormGroup>
-                </FormGroup>
+                                <Col xs={10} className="show-col">
+                                    <p>Estado:</p>
+                                    <InputPicker data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
+                                </Col>
 
-                <FormGroup>
-                    <FormGroup>
-                        <ControlLabel>Titular do Cartão</ControlLabel>
-                        <FormControl name="donoCartao" type="text" />
-                    </FormGroup>
+                                <Col xs={10} className="show-col">
+                                    <p>Municipio:</p>
+                                    <InputPicker data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                </Col>
+                            </Row>
+                        </Row>
 
-                    <FormGroup>
-                        <ControlLabel>Numero do Cartão</ControlLabel>
-                        <FormControl name="numberCard" type="text" />
-                    </FormGroup>
+                        <Row className="show-row">
+                            <Row className="show-row">
+                                <Col xs={12} className="show-col">
+                                    <ControlLabel>Titular do Cartão:</ControlLabel>
+                                    <Input name="donoCartao" type="text" onChange={value => setTitularCartao(value)}/>
+                                </Col>
 
-                    <FormGroup>
-                        <ControlLabel>Validade</ControlLabel>
-                        <FormControl name="Validade" type="date" />
-                    </FormGroup>
+                                <Col xs={12} className="show-col">
+                                    <p>Validade:</p>
+                                    <DatePicker className="validade-cartao" format="MM/YY" style={{ width: 110 }} onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
+                                </Col>
+                            </Row>
 
-                    <FormGroup>
-                        <ControlLabel>CSV</ControlLabel>
-                        <FormControl name="csv" type="date" />
-                    </FormGroup>
-                </FormGroup>
+                            <Row className="show-row">
+                                <Col xs={12} className="show-col">
+                                    <ControlLabel>Numero do Cartão:</ControlLabel>
+                                    <Input name="num-cartao" type="text" id="num-cartao" onKeyPress={() => FormatMask("#### #### #### ####", "num-cartao")} maxLength="19" onChange={value => setNumeroCartao(value)}/>
+                                </Col>
 
-                <FormGroup>
-                    <div className="button-group">
-                        <Link to="/home" className="bnt-register" >Confirmar</Link>
-                        <Link to="/register" className="bnt-register" >Cancelar</Link>
-                    </div>
-                </FormGroup>
-            </Form>
+                                <Col xs={12} className="show-col">
+                                    <ControlLabel>CSV:</ControlLabel>
+                                    <Input style={{ width: 110 }} maxLength="3" onChange={value => setCsvCartao(value)}/>
+                                </Col>
+                            </Row>
+                        </Row>
+
+                        <div className="group-form-butoes">
+                            <Button type="submit" onClick={handleSubmit} className="bnt-confirm" >Confirmar</Button>
+                            <Link to="/" className="cancel-register" >Cancelar</Link>
+                        </div>
+                    </Grid>
+                </Form>
+            </div>
         </div>
     )
 }

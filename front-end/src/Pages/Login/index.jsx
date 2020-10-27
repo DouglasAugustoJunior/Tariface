@@ -1,30 +1,53 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import { Form, FormGroup, FormControl, ControlLabel, } from 'rsuite';
-import 'rsuite/dist/styles/rsuite-default.css';
+import React, { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import api from '../../api';
+import { Form, FormGroup, FormControl, ControlLabel, Button } from 'rsuite';
 import './styles.css';
 
 export default function Login() {
-   
+    const [email, setEmail] = useState();
+    const [senha, setSenha] = useState();
+    const history = useHistory();
+    
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        const data = {
+            email,
+            senha
+        }
+
+        try {
+            await api.post('login', data)
+            .then(async (response) => {
+                sessionStorage.setItem('token', response.data.token);
+                sessionStorage.setItem('id', response.data.usuario.id);
+                history.push("/home");
+            });
+        } catch (error) {
+            alert(`${error}`);
+        }
+    }
+
     return (
-        <div className="login-container">
-           <div className="painel-login">
+        <div id="login-container">
+           <div id="painel-login">
                <Form id="form-login">
-               <ControlLabel>TariFace</ControlLabel>
-                <FormGroup>
-                    <ControlLabel>E-mail</ControlLabel>
-                    <FormControl name="email" type="email" />
-                </FormGroup>
-                <FormGroup>
-                    <ControlLabel>Senha</ControlLabel>
-                    <FormControl name="password" type="password" />
-                </FormGroup>
-                <FormGroup>
-                    <div className="button-group">
-                        <Link to="/home" className="bnt-login" >Login</Link>
-                        <Link to="/register" className="bnt-register" >Cadastrar</Link>
-                    </div>
-                </FormGroup>
+                    <h1>TariFace</h1>
+                    <FormGroup className="grupo-form-login">
+                        <ControlLabel>E-mail:</ControlLabel>
+                        <FormControl name="email" type="email" onChange={value => setEmail(value)}/>
+                    </FormGroup>
+
+                    <FormGroup className="grupo-form-login">
+                        <ControlLabel>Senha:</ControlLabel>
+                        <FormControl name="password" type="password" onChange={value => setSenha(value)}/>
+                    </FormGroup>
+                    
+                    <FormGroup className="group-form-butoes">
+                            <Button onClick={handleSubmit} className="bnt-confirm-login" >Login</Button>
+                            <Link to="/register" className="bnt-register-login" >Cadastrar</Link>
+                    </FormGroup>
                </Form>
            </div>
         </div>
