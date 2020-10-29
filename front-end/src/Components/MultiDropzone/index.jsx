@@ -8,22 +8,24 @@ import FileList from "./FileList";
 
 class MultiDropzone extends Component {
   state = {
-    uploadedFiles: []
+    uploadedFiles: [],
+    photos: 0
   };
 
   async componentDidMount() {
-    const response = await api.get("posts");
+    api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
+    // const response = await api.get("posts");
 
-    this.setState({
-      uploadedFiles: response.data.map(file => ({
-        id: file._id,
-        name: file.name,
-        readableSize: filesize(file.size),
-        preview: file.url,
-        uploaded: true,
-        url: file.url
-      }))
-    });
+    // this.setState({
+    //   uploadedFiles: response.data.map(file => ({
+    //     id: file._id,
+    //     name: file.name,
+    //     readableSize: filesize(file.size),
+    //     preview: file.url,
+    //     uploaded: true,
+    //     url: file.url
+    //   }))
+    // });
   }
 
   handleUpload = files => {
@@ -57,11 +59,13 @@ class MultiDropzone extends Component {
   };
 
   processUpload = uploadedFile => {
+    const id = sessionStorage.getItem('id');
     const data = new FormData();
 
-    data.append("file", uploadedFile.file, uploadedFile.name);
-
-    api.post("posts", data, {
+    data.append("arquivo", uploadedFile.file, uploadedFile.name);
+    
+    // if(this.state.photo <= 8) {
+      api.post(`imagem/upload?idUsuario=${id}`, data, {
         onUploadProgress: e => {
           const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
@@ -70,6 +74,7 @@ class MultiDropzone extends Component {
           });
         }
       }).then(response => {
+        this.setState({photo: this.state.photo + 1});
         this.updateFile(uploadedFile.id, {
           uploaded: true,
           id: response.data._id,
@@ -80,10 +85,11 @@ class MultiDropzone extends Component {
           error: true
         });
       });
+    // }
   };
 
   handleDelete = async id => {
-    await api.delete(`posts/${id}`);
+    // await api.delete(`posts/${id}`);
 
     this.setState({
       uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)

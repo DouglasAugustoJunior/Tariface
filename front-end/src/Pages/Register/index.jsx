@@ -4,7 +4,7 @@ import FormatMask from '../../Utils/FormatMask';
 import api from '../../api';
 import { Form, Col, ControlLabel, Grid, Row, DatePicker, Button, Input, InputPicker, StringType } from 'rsuite';
 import { format } from 'date-fns';
-import SimpleDropzone from '../../components/SimpleDropzone';
+import SimpleDropzone from '../../Components/SimpleDropzone';
 import 'rsuite/dist/styles/rsuite-default.css';
 import './styles.css';
 

@@ -5,9 +5,9 @@ import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
 import api from '../../api';
 import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input} from 'rsuite';
-import MultiDropzone from '../../components/MultiDropzone';
-import SimpleDropzone from '../../components/SimpleDropzone';
-import Card from '../../components/Card';
+import MultiDropzone from '../../Components/MultiDropzone';
+import SimpleDropzone from '../../Components/SimpleDropzone';
+import Card from '../../Components/Card';
 import './styles.css';
 
 export default function Home() {
@@ -16,6 +16,7 @@ export default function Home() {
     const { Column, HeaderCell, Cell } = Table;
     const [modalCartao, setModalCartao] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
+    const [modalImagens, setModalImagens] = useState(false);
     const [foto, setFoto] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
@@ -37,14 +38,14 @@ export default function Home() {
     const [csvCartao, setCsvCartao] = useState();
     const [cartoes, setCartoes] = useState([]);
     const [historico, setHistorico] = useState([]);
-    const ref = useRef(saldo);
+    const ref = useRef();
     
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
     useEffect(() => {
+        // ref.current;
         api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
         .then(response => {
-            console.log(response.data);
             const getNome = response.data.nome;
             const getSaldo = response.data.saldo;
             const getCartoes = response.data.cartoes;
@@ -70,6 +71,7 @@ export default function Home() {
                 }
             });
 
+            response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
             setNome(getNome);
             setCpf(getCpf);
             setEmail(getEmail);
@@ -187,7 +189,7 @@ export default function Home() {
                         <span className="saldo-usuario"> Saldo R$: {saldo} </span>
                    </div>
                    
-                    <Dropdown icon={<img src={foto} alt="Imagem Usuario" className="img-usuario"/>} >
+                    <Dropdown icon={<img src={foto} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalCartao}><FiCreditCard/> Add Cartão</Dropdown.Item>
                         <Dropdown.Item onSelect={logoff}><FiLogOut/> Sair</Dropdown.Item>
@@ -349,7 +351,7 @@ export default function Home() {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={false} onHide={closeModalCartao}>
+            <Modal show={modalImagens} onHide={!modalImagens}>
                 <Modal.Header closeButton={false} >
                     <Modal.Title>Fotos para Reconhecimento Facial</Modal.Title>
                 </Modal.Header>
@@ -360,9 +362,6 @@ export default function Home() {
                     </p>
                     <MultiDropzone/>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={handleAddCard} appearance="primary">Enviar</Button>
-                </Modal.Footer>
             </Modal>
         </div>
     )

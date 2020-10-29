@@ -1,11 +1,11 @@
-import React, {useState, useImperativeHandle } from 'react';
+import React, {useState, useImperativeHandle, forwardRef } from 'react';
 import FormatMask from "../../Utils/FormatMask";
 import { format } from 'date-fns';
 import api from '../../api';
 import { DatePicker, Modal, Button, Form, FormGroup, FormControl, ControlLabel, Input } from 'rsuite';
 import './styles.css';
 
-export default function Card(props) {
+const Card = forwardRef((props, ref) => {
     const [modalSaldo, setModalSaldo] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [saldo, setSaldo] = useState(props.saldo);
@@ -16,7 +16,7 @@ export default function Card(props) {
     const id = sessionStorage.getItem('id');
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
-    useImperativeHandle(props.ref, () => {
+    useImperativeHandle(ref, () => {
         return {
             handleAddSaldo: handleAddSaldo
         }
@@ -45,6 +45,7 @@ export default function Card(props) {
 
     async function handleAddSaldo(event) {
         event.preventDefault();
+        console.log("Porra bitcho!!!")
         try {
             props.saldo = 20;
             // api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${saldo}`);
@@ -153,4 +154,6 @@ export default function Card(props) {
             </Modal>
         </div>
     )
-}
+})
+
+export default Card;

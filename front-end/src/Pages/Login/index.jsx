@@ -9,9 +9,7 @@ export default function Login() {
     const [senha, setSenha] = useState();
     const history = useHistory();
     
-    async function handleSubmit(event) {
-        event.preventDefault();
-
+    async function handleSubmit() {
         const data = {
             email,
             senha
@@ -32,7 +30,7 @@ export default function Login() {
     return (
         <div id="login-container">
            <div id="painel-login">
-               <Form id="form-login">
+               <Form id="form-login" onSubmit={handleSubmit}>
                     <h1>TariFace</h1>
                     <FormGroup className="grupo-form-login">
                         <ControlLabel>E-mail:</ControlLabel>
@@ -45,7 +43,7 @@ export default function Login() {
                     </FormGroup>
                     
                     <FormGroup className="group-form-butoes">
-                            <Button onClick={handleSubmit} className="bnt-confirm-login" >Login</Button>
+                            <Button type="submit" className="bnt-confirm-login" >Login</Button>
                             <Link to="/register" className="bnt-register-login" >Cadastrar</Link>
                     </FormGroup>
                </Form>

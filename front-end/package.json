@@ -9,7 +9,6 @@
     "axios": "^0.20.0",
     "date-fns": "^2.16.1",
     "filesize": "^6.1.0",
-    "lodash": "^4.17.20",
     "react": "^16.13.1",
     "react-circular-progressbar": "^2.0.3",
     "react-dom": "^16.13.1",
