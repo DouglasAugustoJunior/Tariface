@@ -1,11 +1,13 @@
-import React, {useState, useImperativeHandle, forwardRef } from 'react';
+import React, {useState} from 'react';
+import { useHistory } from 'react-router-dom';
 import FormatMask from "../../Utils/FormatMask";
 import { format } from 'date-fns';
 import api from '../../api';
 import { DatePicker, Modal, Button, Form, FormGroup, FormControl, ControlLabel, Input } from 'rsuite';
 import './styles.css';
 
-const Card = forwardRef((props, ref) => {
+export default function Card(props) {
+    const history = useHistory();
     const [modalSaldo, setModalSaldo] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [saldo, setSaldo] = useState(props.saldo);
@@ -15,12 +17,6 @@ const Card = forwardRef((props, ref) => {
     const [csvCartao, setCsvCartao] = useState();
     const id = sessionStorage.getItem('id');
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
-
-    useImperativeHandle(ref, () => {
-        return {
-            handleAddSaldo: handleAddSaldo
-        }
-    });
 
     async function handleSubmitCard(event) {
         event.preventDefault();
@@ -32,9 +28,7 @@ const Card = forwardRef((props, ref) => {
             "csv": csvCartao ? csvCartao : props.csv,
             "idUsuario": id
         }
-
         
-
         try {
             api.put('cartao/atualizar', data)
             closeModalEditar();
@@ -45,11 +39,9 @@ const Card = forwardRef((props, ref) => {
 
     async function handleAddSaldo(event) {
         event.preventDefault();
-        console.log("Porra bitcho!!!")
         try {
-            props.saldo = 20;
-            // api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${saldo}`);
-            closeModalSaldo();
+            api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${saldo}`)
+            .then(() => history.go(0));
         } catch (error) {
             alert(`${error}`)
         }
@@ -57,13 +49,15 @@ const Card = forwardRef((props, ref) => {
 
     async function excluirCartao(event) {
         event.preventDefault();
+        const data = {
+            params: {
+                "id": props.id
+            }
+        }
 
         try {
-            api.delete('/cartao/excluir', {
-                params: {
-                  "id": props.id
-                }})
-            closeModalEditar();
+            api.delete('/cartao/excluir', data)
+            .then(() => history.go(0));
         } catch (error) {
             alert(`${error}`);
             closeModalEditar();
@@ -109,7 +103,7 @@ const Card = forwardRef((props, ref) => {
                             <ControlLabel>Saldo Atual R$: {props.saldo}</ControlLabel>
 
                             <ControlLabel>Valor á ser adicionado</ControlLabel>
-                            <Input id="add-valor" style={{ width: 200 }} type="text" placeholder="R$:" onChange={value => console.log(value)}/>
+                            <Input id="add-valor" style={{ width: 200 }} type="text" placeholder="R$:" onChange={value => setSaldo(value)}/>
                         </FormGroup>
                     </Form>
                 </Modal.Body>
@@ -154,6 +148,4 @@ const Card = forwardRef((props, ref) => {
             </Modal>
         </div>
     )
-})
-
-export default Card;
+}

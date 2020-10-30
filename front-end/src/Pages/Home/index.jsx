@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {FiUser, FiCreditCard, FiEdit, FiLogOut} from 'react-icons/fi';
+import React, {useState, useEffect} from 'react';
+import {FiCreditCard, FiEdit, FiLogOut} from 'react-icons/fi';
 import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
@@ -8,6 +8,7 @@ import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputP
 import MultiDropzone from '../../Components/MultiDropzone';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import Card from '../../Components/Card';
+import User from '../../Assets/user.png';
 import './styles.css';
 
 export default function Home() {
@@ -17,7 +18,7 @@ export default function Home() {
     const [modalCartao, setModalCartao] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [modalImagens, setModalImagens] = useState(false);
-    const [foto, setFoto] = useState();
+    const [foto, setFoto] = useState(User);
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [senha, setSenha] = useState();
@@ -27,9 +28,9 @@ export default function Home() {
     const [numeroCasa, setNumeroCasa] = useState();
     const [cep, setCep] = useState();
     const [complemento, setComplemento] = useState();
-    const [municipio, setMunicipio] = useState();
+    const [municipio, setMunicipio] = useState([]);
     const [idMunicipio, setIdMunicipio] = useState();
-    const [uf, setUf] = useState();
+    const [uf, setUf] = useState([]);
     const [idUf, setIdUf] = useState();
     const [saldo, setSaldo] = useState();
     const [titularCartao, setTitularCartao] = useState();
@@ -38,12 +39,10 @@ export default function Home() {
     const [csvCartao, setCsvCartao] = useState();
     const [cartoes, setCartoes] = useState([]);
     const [historico, setHistorico] = useState([]);
-    const ref = useRef();
     
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
     useEffect(() => {
-        // ref.current;
         api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
         .then(response => {
             const getNome = response.data.nome;
@@ -86,10 +85,11 @@ export default function Home() {
             setCartoes(getCartoes);
             setHistorico(getHistorico);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if(idUf) {
+        if(idUf !== undefined) {
             api.get(`municipio/filtroUF?idUf=${idUf}`)
             .then(response => {
                 const getmunicipio = response.data;
@@ -206,7 +206,6 @@ export default function Home() {
                             validade={cartao.validade}
                             csv={cartao.csv}
                             id={cartao.id}
-                            ref={ref}
                         />
                     ))}
                </div>
@@ -351,16 +350,16 @@ export default function Home() {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={modalImagens} onHide={!modalImagens}>
+            <Modal show={modalImagens} onHide={() => !modalImagens}>
                 <Modal.Header closeButton={false} >
                     <Modal.Title>Fotos para Reconhecimento Facial</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>
                         Para utilizar a funcionalidade de reconhecimento facial, você deve enviar pelo
-                        menos 5 fotos de boa qualidade onde esteja sozinho.
+                        menos 8 fotos de boa qualidade onde esteja sozinho.
                     </p>
-                    <MultiDropzone/>
+                    <MultiDropzone />
                 </Modal.Body>
             </Modal>
         </div>

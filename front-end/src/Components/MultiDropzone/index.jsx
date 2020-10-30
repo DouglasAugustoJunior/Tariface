@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {useHistory} from 'react-router-dom';
 import { uniqueId } from "lodash";
 import filesize from "filesize";
 import api from "../../api";
@@ -9,7 +10,7 @@ import FileList from "./FileList";
 class MultiDropzone extends Component {
   state = {
     uploadedFiles: [],
-    photos: 0
+    photo: 0
   };
 
   async componentDidMount() {
@@ -64,28 +65,28 @@ class MultiDropzone extends Component {
 
     data.append("arquivo", uploadedFile.file, uploadedFile.name);
     
-    // if(this.state.photo <= 8) {
-      api.post(`imagem/upload?idUsuario=${id}`, data, {
-        onUploadProgress: e => {
-          const progress = parseInt(Math.round((e.loaded * 100) / e.total));
+    api.post(`imagem/upload?idUsuario=${id}`, data, {
+      onUploadProgress: e => {
+        const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
-          this.updateFile(uploadedFile.id, {
-            progress
-          });
-        }
-      }).then(response => {
-        this.setState({photo: this.state.photo + 1});
         this.updateFile(uploadedFile.id, {
-          uploaded: true,
-          id: response.data._id,
-          url: response.data.url
+          progress
         });
-      }).catch(() => {
-        this.updateFile(uploadedFile.id, {
-          error: true
-        });
+      }
+    }).then(response => {
+      this.setState({photo: this.state.photo + 1})
+      this.updateFile(uploadedFile.id, {
+        uploaded: true,
+        id: response.data._id,
+        url: response.data.url
       });
-    // }
+      console.log(this.state.photo)
+      this.state.photo >= 8 && useHistory().go(0)
+    }).catch(() => {
+      this.updateFile(uploadedFile.id, {
+        error: true
+      });
+    });
   };
 
   handleDelete = async id => {
