@@ -67,3 +67,19 @@ div.buttons-card button.editar-cartao {
     align-items: center;
     margin-right: 10px;
 }
+
+.btn-excluir-cartao {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    background-color: #FFF;
+    cursor: pointer;
+}
+
+.btn-excluir-cartao svg {
+    color: #495057;
+}
+
+.btn-excluir-cartao svg:hover {
+    color: #f94144;
+}

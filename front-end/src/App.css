@@ -12,11 +12,11 @@
 }
 
 body {
-  /* background: var(--background) !important; */
-  background: #343a40 !important;
+  background: var(--background) !important;
+  /* background: #343a40 !important; */
 }
 
-html, body, #root {
+html, body {
   height: 100%;
 }
 

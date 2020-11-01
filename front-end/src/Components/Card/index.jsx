@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import { useHistory } from 'react-router-dom';
+import { FiTrash2 } from 'react-icons/fi'
 import FormatMask from "../../Utils/FormatMask";
 import { format } from 'date-fns';
 import api from '../../api';
-import { DatePicker, Modal, Button, Form, FormGroup, FormControl, ControlLabel, Input } from 'rsuite';
+import { DatePicker, Modal, Button, Form,
+ FormGroup, FormControl, ControlLabel, Input, Alert } from 'rsuite';
 import './styles.css';
 
 export default function Card(props) {
@@ -40,10 +42,16 @@ export default function Card(props) {
     async function handleAddSaldo(event) {
         event.preventDefault();
         try {
-            api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${saldo}`)
-            .then(() => history.go(0));
+            console.log(parseFloat(saldo))
+            if(saldo !== undefined){
+                api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${parseFloat(saldo)}`)
+                .then(() => {
+                    Alert.success(`Saldo adicionado com sucesso`);
+                    history.go(0);
+                });
+            }
         } catch (error) {
-            alert(`${error}`)
+            Alert.error('Falha ao excluir cartão!!!');
         }
     }
 
@@ -57,10 +65,12 @@ export default function Card(props) {
 
         try {
             api.delete('/cartao/excluir', data)
-            .then(() => history.go(0));
+            .then(() => {
+                Alert.success(`Cartão excluido com sucesso`);
+                history.go(0);
+            });
         } catch (error) {
-            alert(`${error}`);
-            closeModalEditar();
+            Alert.error('Falha ao excluir cartão!!!');
         }
     }
 
@@ -100,9 +110,7 @@ export default function Card(props) {
                 <Modal.Body>
                     <Form>
                         <FormGroup>
-                            <ControlLabel>Saldo Atual R$: {props.saldo}</ControlLabel>
-
-                            <ControlLabel>Valor á ser adicionado</ControlLabel>
+                            <ControlLabel>Valor á ser adicionado:</ControlLabel>
                             <Input id="add-valor" style={{ width: 200 }} type="text" placeholder="R$:" onChange={value => setSaldo(value)}/>
                         </FormGroup>
                     </Form>
@@ -138,12 +146,13 @@ export default function Card(props) {
                                 </div>
                             </div>
                         </div>
+                            
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    <a onClick={excluirCartao} title="Excluir Cartão" className="btn-excluir-cartao"><FiTrash2 size={20}/></a>
                     <Button onClick={handleSubmitCard} appearance="primary">Salvar</Button>
                     <Button onClick={closeModalEditar} >Cancelar</Button>
-                    <Button onClick={excluirCartao} color="red">Excluir</Button>
                 </Modal.Footer>
             </Modal>
         </div>

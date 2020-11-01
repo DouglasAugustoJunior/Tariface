@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import api from '../../api';
-import { Form, Col, ControlLabel, Grid, Row, DatePicker, Button, Input, InputPicker, Alert, Loader } from 'rsuite';
+import { Form, Col, ControlLabel, Grid, Row,
+ DatePicker, Button, Input, InputPicker, Alert,
+ Loader, FormControl } from 'rsuite';
 import { format } from 'date-fns';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import 'rsuite/dist/styles/rsuite-default.css';
 import './styles.css';
 
 export default function Register() {
-
     const [foto, setFoto] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
@@ -29,6 +30,8 @@ export default function Register() {
     const [validadeCartao, setValidadeCartao] = useState();
     const [csvCartao, setCsvCartao] = useState();
     const [load, setLoad] = useState(false);
+    const [errorVisible, setErrorVisible] = useState(false);
+    const errorMessage = errorVisible ? 'Senhas diferentes !!!' : null;
     const history = useHistory();
 
     useEffect(() => {
@@ -38,6 +41,10 @@ export default function Register() {
             setUf(getUf);
         });
     }, []);
+
+    useEffect(() => {
+        senha !== confSenha ? setErrorVisible(true) : setErrorVisible(false);
+    }, [senha, confSenha]);
 
     useEffect(() => {
         if(idUf){
@@ -95,6 +102,7 @@ export default function Register() {
 
     return (
         <div id="register-container">
+            { load && <Loader backdrop size="lg" content="Aguarde..." vertical /> }
             <div id="form-container">
                 <h1>TariFace</h1>
                 <Form id="form-register" onSubmit={handleSubmit} >
@@ -133,7 +141,7 @@ export default function Register() {
 
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>Confirmar Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} type="password"/>
+                                        <FormControl style={{ width: 220 }} errorMessage={errorMessage} name="confSenha" type="password" onChange={value => setConfSenha(value)}/>
                                     </Col>
                                 </Row>
                             </Col>
@@ -170,7 +178,7 @@ export default function Register() {
 
                                 <Col xs={10} className="show-col">
                                     <p>Municipio:</p>
-                                    <InputPicker data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                    <InputPicker disabled={idUf === undefined} data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
                                 </Col>
                             </Row>
                         </Row>
@@ -208,7 +216,6 @@ export default function Register() {
                     </Grid>
                 </Form>
             </div>
-            {load && <Loader backdrop content="Aguarde..." vertical />}
         </div>
     )
 }

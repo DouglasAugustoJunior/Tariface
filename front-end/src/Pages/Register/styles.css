@@ -72,3 +72,7 @@
 .group-form-butoes a.cancel-register {
     background-color: var(--secondary-red);
 }
+
+.rs-loader-backdrop {
+    height: 140%;
+}

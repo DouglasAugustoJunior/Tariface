@@ -5,7 +5,9 @@ import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
 import api from '../../api';
-import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input, Alert} from 'rsuite';
+import { Table, Dropdown, Modal, Form, ControlLabel,
+ FormControl, Button, InputPicker, DatePicker, Grid,
+ Row, Col, Input, Alert} from 'rsuite';
 import MultiDropzone from '../../Components/MultiDropzone';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import Card from '../../Components/Card';
@@ -13,8 +15,6 @@ import User from '../../Assets/user.png';
 import './styles.css';
 
 export default function Home() {
-    const history = useHistory();
-    const id = sessionStorage.getItem('id');
     const { Column, HeaderCell, Cell } = Table;
     const [modalCartao, setModalCartao] = useState(false);
     const [usuario, setUsuario] = useState()
@@ -41,6 +41,10 @@ export default function Home() {
     const [csvCartao, setCsvCartao] = useState();
     const [cartoes, setCartoes] = useState([]);
     const [historico, setHistorico] = useState([]);
+    const [errorVisible, setErrorVisible] = useState(false);
+    const history = useHistory();
+    const id = sessionStorage.getItem('id');
+    const errorMessage = errorVisible ? 'Senhas diferentes !' : null;
     
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
@@ -66,7 +70,7 @@ export default function Home() {
                 }
             });
 
-            console.log("Fotos: ", response.data.imagens.length)
+            console.log("Fotos DB: ", response.data.imagens.length)
 
             response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
             response.data.imagens.forEach(foto => {
@@ -80,6 +84,7 @@ export default function Home() {
             setCpf(getCpf);
             setEmail(getEmail);
             setSenha(getSenha);
+            setConfSenha(getSenha);
             setEndereco(getLogradouro);
             setNumeroCasa(getNumero);
             setComplemento(getComplemento);
@@ -105,6 +110,10 @@ export default function Home() {
         }
     }, [idUf]);
 
+    useEffect(() => {
+        senha !== confSenha ? setErrorVisible(true) : setErrorVisible(false);
+    }, [senha, confSenha]);
+
     async function handleSubmitUser(event) {
         event.preventDefault();
         const enviarFoto = new FormData();
@@ -122,17 +131,17 @@ export default function Home() {
                 "logradouro": document.getElementById("input_endereco").value,
                 "numero": document.getElementById("input_numero").value,
                 "cep": document.getElementById("cep").value.replace(/[^\d]+/g, ""),
-                "municipioId": document.getElementById("input_municipio").value ? document.getElementById("input_municipio").value : usuario.endereco.municipioId,
+                "municipioId": idMunicipio ? idMunicipio : usuario.endereco.municipioId,
                 "complemento": document.getElementById("input_complemento").value
             }
         }
 
         try {
-            console.log(enviarFoto);
             await api.put('/usuario/atualizarUsuario', data)
             .then(async () => {
                 enviarFoto.length > 0 && await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
                 Alert.success('Dados atualizado com sucesso');
+                closeModalEditar();
             });
         } catch (error) {
             Alert.error('Falha ao atualizar os dados');
@@ -171,17 +180,11 @@ export default function Home() {
         history.push('/');
     }
 
-    function closeModalCartao() {
-        setModalCartao(false);
-      }
+    function closeModalCartao() { setModalCartao(false) }
 
-    function openModalCartao() {
-        setModalCartao(true);
-    }
+    function openModalCartao() { setModalCartao(true) }
 
-    function closeModalEditar() {
-        setModalEditar(false);
-      }
+    function closeModalEditar() { setModalEditar(false) }
 
     function openModalEditar() {
         setModalEditar(true);
@@ -280,7 +283,7 @@ export default function Home() {
 
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>Confirmar Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} id="input_confSenha" type="password" onChange={value => setConfSenha(value)}/>
+                                        <FormControl style={{ width: 220 }} errorMessage={errorMessage} id="input_confSenha" type="password" onChange={value => setConfSenha(value)}/>
                                     </Col>
                                 </Row>
                             </Col>
@@ -317,7 +320,7 @@ export default function Home() {
 
                                 <Col xs={10} className="show-col">
                                     <p>Municipio:</p>
-                                    <InputPicker data={municipio} labelKey="nome" id="input_municipio" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                    <InputPicker disabled={idUf === undefined} data={municipio} labelKey="nome" id="input_municipio" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
                                 </Col>
                             </Row>
                         </Row>
@@ -363,7 +366,7 @@ export default function Home() {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={modalImagens} onHide={() => !modalImagens}>
+            <Modal show={false} onHide={() => !modalImagens}>
                 <Modal.Header closeButton={false} >
                     <Modal.Title>Fotos para Reconhecimento Facial</Modal.Title>
                 </Modal.Header>
