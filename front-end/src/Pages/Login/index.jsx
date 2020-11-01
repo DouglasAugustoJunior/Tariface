@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import api from '../../api';
-import { Form, FormGroup, FormControl, ControlLabel, Button } from 'rsuite';
+import { Form, FormGroup, FormControl, ControlLabel, Button, Alert } from 'rsuite';
 import './styles.css';
 
 export default function Login() {
@@ -23,7 +23,7 @@ export default function Login() {
                 history.push("/home");
             });
         } catch (error) {
-            alert(`${error}`);
+            Alert.error('E-mail ou senha invalidos!!!');
         }
     }
 

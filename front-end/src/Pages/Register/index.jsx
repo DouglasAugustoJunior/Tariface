@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import api from '../../api';
-import { Form, Col, ControlLabel, Grid, Row, DatePicker, Button, Input, InputPicker, StringType } from 'rsuite';
+import { Form, Col, ControlLabel, Grid, Row, DatePicker, Button, Input, InputPicker, Alert, Loader } from 'rsuite';
 import { format } from 'date-fns';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import 'rsuite/dist/styles/rsuite-default.css';
@@ -28,7 +28,8 @@ export default function Register() {
     const [numeroCartao, setNumeroCartao] = useState();
     const [validadeCartao, setValidadeCartao] = useState();
     const [csvCartao, setCsvCartao] = useState();
-
+    const [load, setLoad] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         api.get('uf')
@@ -50,6 +51,7 @@ export default function Register() {
 
     async function handleSubmit(event) {
         event.preventDefault();
+        setLoad(true);
         const enviarFoto = new FormData();
         enviarFoto.append('arquivo', foto);
         const data = {
@@ -74,14 +76,20 @@ export default function Register() {
         }
 
         try {
+            console.log(enviarFoto)
             await api.post('usuario/cadastrarUsuario', data)
             .then(async (resp) => {
                 const id = resp.request.response;
-                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto);
-                alert(`Usuario com ID ${id} foi cadastrado com sucesso.`);
+                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
+                .then(() => {
+                    setLoad(false);
+                    Alert.success(`Usuario com ID ${id} foi cadastrado com sucesso.`);
+                    history.push('/');
+                });
             });
         } catch (error) {
-            alert(`${error}`);
+            setLoad(false);
+            Alert.error('Falha ao cadastrar!!!')
         }
     }
 
@@ -200,6 +208,7 @@ export default function Register() {
                     </Grid>
                 </Form>
             </div>
+            {load && <Loader backdrop content="Aguarde..." vertical />}
         </div>
     )
 }

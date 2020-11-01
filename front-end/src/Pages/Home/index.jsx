@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-expressions */
 import React, {useState, useEffect} from 'react';
 import {FiCreditCard, FiEdit, FiLogOut} from 'react-icons/fi';
 import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
 import api from '../../api';
-import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input} from 'rsuite';
+import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input, Alert} from 'rsuite';
 import MultiDropzone from '../../Components/MultiDropzone';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import Card from '../../Components/Card';
@@ -16,6 +17,7 @@ export default function Home() {
     const id = sessionStorage.getItem('id');
     const { Column, HeaderCell, Cell } = Table;
     const [modalCartao, setModalCartao] = useState(false);
+    const [usuario, setUsuario] = useState()
     const [modalEditar, setModalEditar] = useState(false);
     const [modalImagens, setModalImagens] = useState(false);
     const [foto, setFoto] = useState(User);
@@ -48,6 +50,7 @@ export default function Home() {
             const getNome = response.data.nome;
             const getSaldo = response.data.saldo;
             const getCartoes = response.data.cartoes;
+            const getSenha = response.data.senha;
             const getCpf = response.data.cpf ;
             const getEmail = response.data.email ;
             const getLogradouro = response.data.endereco.logradouro ;
@@ -63,17 +66,20 @@ export default function Home() {
                 }
             });
 
+            console.log("Fotos: ", response.data.imagens.length)
+
+            response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
             response.data.imagens.forEach(foto => {
                 if(foto.perfil) {
                     const getFoto = foto.url;
                     setFoto(getFoto)
                 }
             });
-
-            response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
+            
             setNome(getNome);
             setCpf(getCpf);
             setEmail(getEmail);
+            setSenha(getSenha);
             setEndereco(getLogradouro);
             setNumeroCasa(getNumero);
             setComplemento(getComplemento);
@@ -84,6 +90,7 @@ export default function Home() {
             setSaldo(getSaldo);
             setCartoes(getCartoes);
             setHistorico(getHistorico);
+            setUsuario(response.data);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -102,28 +109,33 @@ export default function Home() {
         event.preventDefault();
         const enviarFoto = new FormData();
         enviarFoto.append('arquivo', foto);
+
         const data = {
-            "nome": nome, 
-            "cpf": cpf && cpf.replace(/[^\d]+/g, ""),
-            "email": email,
-            "senha": senha,
-            "endereco": {
-                "logradouro": endereco,
-                "numero": numeroCasa,
-                "cep": cep && cep.replace(/[^\d]+/g, ""),
-                "municipioId": idMunicipio,
-                "complemento": complemento,
-            },
+            "id": id,
+            "grupoPessoaId": usuario.grupoPessoaId,
+            "nome": document.getElementById("input_nome").value,
+            "cpf": document.getElementById("cpf").value.replace(/[^\d]+/g, ""),
+            "saldo": saldo,
+            "email": document.getElementById("input_email").value,
+            "senha": senha ? senha : document.getElementById("input_senha").value,
+            "endereco":{
+                "logradouro": document.getElementById("input_endereco").value,
+                "numero": document.getElementById("input_numero").value,
+                "cep": document.getElementById("cep").value.replace(/[^\d]+/g, ""),
+                "municipioId": document.getElementById("input_municipio").value ? document.getElementById("input_municipio").value : usuario.endereco.municipioId,
+                "complemento": document.getElementById("input_complemento").value
+            }
         }
 
         try {
-            await api.post('usuario/cadastrarUsuario', data)
-            .then(async (resp) => {
-                const id = resp.request.response;
-                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto);
+            console.log(enviarFoto);
+            await api.put('/usuario/atualizarUsuario', data)
+            .then(async () => {
+                enviarFoto.length > 0 && await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
+                Alert.success('Dados atualizado com sucesso');
             });
         } catch (error) {
-            alert(`${error}`);
+            Alert.error('Falha ao atualizar os dados');
         }
     }
 
@@ -144,11 +156,12 @@ export default function Home() {
                 .then(response => {
                     const  getCartoes = response.data;
                     setCartoes(getCartoes);
+                    Alert.success('Cartão adicionado com sucesso.')
                     closeModalCartao();
                 });
             });
         } catch (error) {
-            alert(`${error}`);
+            Alert.error('Falha ao adicionar o cartão.')
             closeModalCartao();
         }
     }
@@ -243,7 +256,7 @@ export default function Home() {
                                 <Row className="show-row">
                                     <Col xs={24} className="show-col">
                                         <p>Nome Completo:</p>
-                                        <Input style={{ width: 490 }} value={nome} name="nome" type="text" onChange={value => setNome(value)}/>
+                                        <Input style={{ width: 490 }} value={nome} id="input_nome" type="text" onChange={value => setNome(value)}/>
                                     </Col>
                                 </Row>
 
@@ -255,19 +268,19 @@ export default function Home() {
 
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>E-mail:</ControlLabel>
-                                        <Input style={{ width: 220 }} name="email" value={email} type="email" onChange={value => setEmail(value)}/>
+                                        <Input style={{ width: 220 }} id="input_email" value={email} type="email" onChange={value => setEmail(value)}/>
                                     </Col>
                                 </Row>
 
                                 <Row className="show-row" >
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} name="senha" type="password" onChange={value => setSenha(value)}/>
+                                        <Input style={{ width: 220 }} id="input_senha" type="password" onChange={value => setSenha(value)}/>
                                     </Col>
 
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>Confirmar Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} name="confSenha" type="password" onChange={value => setConfSenha(value)}/>
+                                        <Input style={{ width: 220 }} id="input_confSenha" type="password" onChange={value => setConfSenha(value)}/>
                                     </Col>
                                 </Row>
                             </Col>
@@ -277,17 +290,17 @@ export default function Home() {
                             <Row className="show-row">
                                 <Col xs={10} className="show-col">
                                     <ControlLabel>Logradouro:</ControlLabel>
-                                    <Input name="endereco" type="text" value={endereco} onChange={value => setEndereco(value)}/>
+                                    <Input type="text" id="input_endereco" value={endereco} onChange={value => setEndereco(value)}/>
                                 </Col>
 
                                 <Col xs={4} className="show-col">
                                     <ControlLabel>Numero:</ControlLabel>
-                                    <Input style={{ width: 100 }} maxLength="8" value={numeroCasa} name="numero" type="text" onChange={value => setNumeroCasa(value)}/>
+                                    <Input style={{ width: 100 }} maxLength="8" value={numeroCasa} id="input_numero" type="text" onChange={value => setNumeroCasa(value)}/>
                                 </Col>
 
                                 <Col xs={10} className="show-col">
                                     <ControlLabel>Complemento:</ControlLabel>
-                                    <Input type="text" style={{ width: 250 }} value={complemento} onChange={value => setComplemento(value)}/>
+                                    <Input type="text" style={{ width: 250 }} id="input_complemento" value={complemento} onChange={value => setComplemento(value)}/>
                                 </Col>
                             </Row>
 
@@ -299,12 +312,12 @@ export default function Home() {
 
                                 <Col xs={10} className="show-col">
                                     <p>Estado:</p>
-                                    <InputPicker data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
+                                    <InputPicker data={uf} labelKey="nome" id="input_estado" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
                                 </Col>
 
                                 <Col xs={10} className="show-col">
                                     <p>Municipio:</p>
-                                    <InputPicker data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                    <InputPicker data={municipio} labelKey="nome" id="input_municipio" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
                                 </Col>
                             </Row>
                         </Row>

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import {useHistory} from 'react-router-dom';
 import { uniqueId } from "lodash";
 import filesize from "filesize";
 import api from "../../api";
@@ -46,7 +45,11 @@ class MultiDropzone extends Component {
       uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
     });
 
-    uploadedFiles.forEach(this.processUpload);
+    uploadedFiles.forEach((file) => {
+      let upfiles = this.processUpload(file);
+      console.log(upfiles);
+    })
+      this.state.photo >= 8 && window.location.reload(true);
   };
 
   updateFile = (id, data) => {
@@ -60,12 +63,13 @@ class MultiDropzone extends Component {
   };
 
   processUpload = uploadedFile => {
+    console.log("Aqui")
     const id = sessionStorage.getItem('id');
     const data = new FormData();
 
     data.append("arquivo", uploadedFile.file, uploadedFile.name);
     
-    api.post(`imagem/upload?idUsuario=${id}`, data, {
+    return api.post(`imagem/upload?idUsuario=${id}`, data, {
       onUploadProgress: e => {
         const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
@@ -80,20 +84,11 @@ class MultiDropzone extends Component {
         id: response.data._id,
         url: response.data.url
       });
-      console.log(this.state.photo)
-      this.state.photo >= 8 && useHistory().go(0)
+      console.log("Fotos: ", this.state.photo)
     }).catch(() => {
       this.updateFile(uploadedFile.id, {
         error: true
       });
-    });
-  };
-
-  handleDelete = async id => {
-    // await api.delete(`posts/${id}`);
-
-    this.setState({
-      uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)
     });
   };
 
@@ -109,7 +104,7 @@ class MultiDropzone extends Component {
         <Content>
           <Upload onUpload={this.handleUpload} />
           {!!uploadedFiles.length && (
-            <FileList files={uploadedFiles} onDelete={this.handleDelete} />
+            <FileList files={uploadedFiles} />
           )}
         </Content>
       </Container>
