@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import api from '../../api';
 import { Table, Dropdown, Modal, Form, ControlLabel,
  FormControl, Button, InputPicker, DatePicker, Grid,
- Row, Col, Input, Alert} from 'rsuite';
+ Row, Col, Input, Alert } from 'rsuite';
 import MultiDropzone from '../../Components/MultiDropzone';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import Card from '../../Components/Card';
@@ -180,6 +180,20 @@ export default function Home() {
         history.push('/');
     }
 
+    async function updateSaldo() {
+        await api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
+        .then((response) => {
+            setSaldo(response.data.saldo);
+        })
+    }
+
+    async function updateCartao() {
+        await api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
+        .then((response) => {
+            setCartoes(response.data.cartoes);
+        })
+    }
+
     function closeModalCartao() { setModalCartao(false) }
 
     function openModalCartao() { setModalCartao(true) }
@@ -221,6 +235,8 @@ export default function Home() {
                             numero={cartao.numero}
                             validade={cartao.validade}
                             csv={cartao.csv}
+                            updateCartao={updateCartao}
+                            updateSaldo={updateSaldo}
                             id={cartao.id}
                         />
                     ))}
@@ -344,7 +360,7 @@ export default function Home() {
                             <FormControl name="donoCartao" type="text" onChange={value => setTitularCartao(value)}/>
                             
                             <ControlLabel>Numero do Cartão:</ControlLabel>
-                            <FormControl name="num-cartao" type="text" onChange={value => setNumeroCartao(value)}/>
+                            <FormControl name="num-cartao" id="num-cartao" type="text" onKeyPress={() => FormatMask("#### #### #### ####", "num-cartao")} maxLength="19" onChange={value => setNumeroCartao(value)}/>
                             
                             <div className="dataCartao">
                                 <div>
@@ -354,7 +370,7 @@ export default function Home() {
 
                                 <div>
                                     <ControlLabel>CSV:</ControlLabel>
-                                    <Input type="text" style={{ width: 100 }} onChange={value => setCsvCartao(value)}/>
+                                    <Input type="text" style={{ width: 100 }} maxLength="3" onChange={value => setCsvCartao(value)}/>
                                 </div>
                             </div>
                         </div>

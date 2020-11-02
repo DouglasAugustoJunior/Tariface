@@ -102,7 +102,6 @@ export default function Register() {
 
     return (
         <div id="register-container">
-            { load && <Loader backdrop size="lg" content="Aguarde..." vertical /> }
             <div id="form-container">
                 <h1>TariFace</h1>
                 <Form id="form-register" onSubmit={handleSubmit} >
@@ -216,6 +215,7 @@ export default function Register() {
                     </Grid>
                 </Form>
             </div>
+            { load && <Loader backdrop size="lg" content="Aguarde..." vertical /> }
         </div>
     )
 }

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi'
 import FormatMask from "../../Utils/FormatMask";
 import { format } from 'date-fns';
@@ -9,14 +8,13 @@ import { DatePicker, Modal, Button, Form,
 import './styles.css';
 
 export default function Card(props) {
-    const history = useHistory();
     const [modalSaldo, setModalSaldo] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [saldo, setSaldo] = useState(props.saldo);
-    const [titularCartao, setTitularCartao] = useState();
-    const [numeroCartao, setNumeroCartao] = useState();
-    const [validadeCartao, setValidadeCartao] = useState();
-    const [csvCartao, setCsvCartao] = useState();
+    const [titularCartao, setTitularCartao] = useState(props.titular);
+    const [numeroCartao, setNumeroCartao] = useState(props.numero);
+    const [validadeCartao, setValidadeCartao] = useState(props.validade);
+    const [csvCartao, setCsvCartao] = useState(props.csv);
     const id = sessionStorage.getItem('id');
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
@@ -33,21 +31,25 @@ export default function Card(props) {
         
         try {
             api.put('cartao/atualizar', data)
-            closeModalEditar();
+            .then(() => {
+                props.updateCartao();
+                Alert.success(`Cartão atualizado com sucesso`);
+                closeModalEditar();
+            })
         } catch (error) {
-            alert(`${error}`)
+            Alert.error('Falha ao atualizar cartão!!!');
         }
     }
 
     async function handleAddSaldo(event) {
         event.preventDefault();
         try {
-            console.log(parseFloat(saldo))
-            if(saldo !== undefined){
+            if(saldo !== undefined) {
                 api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${parseFloat(saldo)}`)
                 .then(() => {
+                    props.updateSaldo();
                     Alert.success(`Saldo adicionado com sucesso`);
-                    history.go(0);
+                    closeModalSaldo();
                 });
             }
         } catch (error) {
@@ -66,29 +68,22 @@ export default function Card(props) {
         try {
             api.delete('/cartao/excluir', data)
             .then(() => {
+                props.updateCartao();
                 Alert.success(`Cartão excluido com sucesso`);
-                history.go(0);
+                closeModalEditar();
             });
         } catch (error) {
             Alert.error('Falha ao excluir cartão!!!');
         }
     }
 
-    function closeModalSaldo() {
-        setModalSaldo(false);
-      }
+    function closeModalSaldo() { setModalSaldo(false) }
 
-    function openModalSaldo() {
-        setModalSaldo(true)
-    }
+    function openModalSaldo() { setModalSaldo(true) }
 
-    function closeModalEditar() {
-        setModalEditar(false);
-      }
+    function closeModalEditar() { setModalEditar(false) }
 
-    function openModalEditar() {
-        setModalEditar(true);
-    }
+    function openModalEditar() { setModalEditar(true) }
 
     return (
         <div className="card-cartao">
@@ -96,7 +91,7 @@ export default function Card(props) {
             <span className="number-cartao">{props.numero}</span>
 
             <p>Validade</p>
-            <DatePicker placeholder={props.validade} style={{ width: 150 }} disabled/>
+            <DatePicker placeholder={format(new Date(props.validade), 'MM/yyyy')} style={{ width: 150 }} disabled/>
 
             <div className="buttons-card">
                 <Button onClick={openModalSaldo} className="novo-cartao" >Add Saldo</Button>
@@ -137,7 +132,7 @@ export default function Card(props) {
                             <div className="dataCartao">
                                 <div>
                                     <ControlLabel>Validade:</ControlLabel>
-                                    <DatePicker placeholder={props.validade} format="YYYY-MM" onChange={value => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
+                                    <DatePicker placeholder={format(new Date(props.validade), 'MM/yyyy')} format="YYYY-MM" onChange={value => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
                                 </div>
 
                                 <div>

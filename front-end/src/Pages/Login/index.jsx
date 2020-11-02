@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import api from '../../api';
-import { Form, FormGroup, FormControl, ControlLabel, Button, Alert } from 'rsuite';
+import { Form, FormGroup, FormControl, ControlLabel, Button, Alert, Loader } from 'rsuite';
 import './styles.css';
 
 export default function Login() {
     const [email, setEmail] = useState();
     const [senha, setSenha] = useState();
+    const [load, setLoad] = useState(false);
     const history = useHistory();
     
     async function handleSubmit() {
+        setLoad(true);
         const data = {
             email,
             senha
@@ -20,9 +22,11 @@ export default function Login() {
             .then(async (response) => {
                 sessionStorage.setItem('token', response.data.token);
                 sessionStorage.setItem('id', response.data.usuario.id);
+                setLoad(false);
                 history.push("/home");
             });
         } catch (error) {
+            setLoad(false);
             Alert.error('E-mail ou senha invalidos!!!');
         }
     }
@@ -48,6 +52,7 @@ export default function Login() {
                     </FormGroup>
                </Form>
            </div>
+           { load && <Loader backdrop size="lg" content="Aguarde..." vertical /> }
         </div>
     )
 }
