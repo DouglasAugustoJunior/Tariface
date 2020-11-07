@@ -410,7 +410,7 @@ namespace AspNet_UploadImagem.Handlers
                         var result = _imagemRepository.Salvar(imagem);
                         if(result != null && imagemPerfilAtual != null) // Se salvou e existia uma imagem de perfil anterior
                         {
-                            upload.Delete(imagem.Nome).Wait();                  // Apaga a imagem no Storage
+                            upload.Delete(imagemPerfilAtual.Nome).Wait();                  // Apaga a imagem no Storage
                             _imagemRepository.Apagar(objeto:imagemPerfilAtual); // Apaga imagem no banco
                         }
 
