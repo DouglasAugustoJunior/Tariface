@@ -42,7 +42,7 @@ namespace AspNet_UploadImagem.Controllers
         /// </summary>
         /// <param name="arquivo">Arquivo a ser salvo</param>
         /// <returns></returns>
-        [Authorize]
+        /// [Authorize]
         [HttpPost("reconhecimentoFacial")]
         public Task<string> ReconhecimentoFacial([FromForm] IFormFile arquivo) => _imagemHandler.ReconhecimentoFacialAsync(arquivo: arquivo);
 

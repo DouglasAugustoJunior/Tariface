@@ -4,6 +4,7 @@ import { FiCamera, FiAlertCircle, FiDownload } from 'react-icons/fi';
 import { DropContainer, UploadMessage } from "./styles";
 
 export default class Upload extends Component {
+
   renderDragMessage = (isDragActive, isDragReject) => {
     if (!isDragActive) {
       return <UploadMessage><FiCamera size={20}/> Arraste suas fotos aqui...</UploadMessage>;
@@ -20,7 +21,7 @@ export default class Upload extends Component {
     const { onUpload } = this.props;
 
     return (
-      <Dropzone accept="image/*" multiple={false} onDropAccepted={onUpload}>
+      <Dropzone accept="image/*" multiple={false} disabled={this.props.disabledDropzone} onDropAccepted={onUpload}>
         {({ getRootProps, getInputProps, isDragActive, isDragReject }) => (
           <DropContainer
             {...getRootProps()}

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { uniqueId } from "lodash";
 import filesize from "filesize";
 import api from "../../api";
+import {Alert} from "rsuite"
 import { Container, Content } from "./styles";
 import Upload from "./Upload";
 import FileList from "./FileList";
@@ -9,37 +9,17 @@ import FileList from "./FileList";
 class MultiDropzone extends Component {
   state = {
     uploadedFiles: [],
-    photo: 0
+    disabledDropzone: false
   };
-
-  // componentDidUpdate(prevProps) {
-  //   if(prevProps.observer !== this.state.observer) {
-  //     const http = this.state.observer
-  //     // http.then((response) => {console.log("Deu bom: ", response)})
-  //     console.log(typeof http)
-  //   } 
-  // }
 
   async componentDidMount() {
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
-    // const response = await api.get("posts");
-
-    // this.setState({
-    //   uploadedFiles: response.data.map(file => ({
-    //     id: file._id,
-    //     name: file.name,
-    //     readableSize: filesize(file.size),
-    //     preview: file.url,
-    //     uploaded: true,
-    //     url: file.url
-    //   }))
-    // });
   }
 
   handleUpload = async files => {
     const uploadedFiles = files.map(file => ({
       file,
-      id: uniqueId(),
+      id: file.name + "Id-" + Math.floor(Math.random() * 1000),
       name: file.name,
       readableSize: filesize(file.size),
       preview: URL.createObjectURL(file),
@@ -49,9 +29,7 @@ class MultiDropzone extends Component {
       url: null
     }));
     
-    this.setState({
-      uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
-    });
+    this.setState({ uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles) });
 
     uploadedFiles.forEach(this.processUpload)
   };
@@ -71,26 +49,38 @@ class MultiDropzone extends Component {
     const data = new FormData();
 
     data.append("arquivo", uploadedFile.file, uploadedFile.name);
-    
-    return await api.post(`imagem/upload?idUsuario=${id}`, data, {
+    this.setState({disabledDropzone: true})
+    await api.post(`imagem/upload?idUsuario=${id}`, data, {
       onUploadProgress: e => {
         const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
-        this.updateFile(uploadedFile.id, {
-          progress
-        });
+        this.updateFile(uploadedFile.id, { progress });
       }
+      
     }).then(response => {
-      this.setState({photo: this.state.photo + 1})
+      if(response.data.indexOf("erro") !== -1) throw new Error(response.data);
+
+      if(response.data.indexOf("falha") !== -1) throw new Error(response.data);
+
+      if(response.data.indexOf("não suportado") !== -1) throw new Error(response.data);
+
+      if(response.data.indexOf("Nenhum") !== -1) throw new Error(response.data);
+
+      api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
+        .then(response => {
+          response.data.imagens.length >= 8 && this.props.activeButton();
+          response.data.imagens.length >= 15 && window.location.reload(true);
+        });
+
+      this.setState({disabledDropzone: false});
       this.updateFile(uploadedFile.id, {
         uploaded: true,
         id: response.data._id,
         url: response.data.url
       });
-      this.state.photo > 8 && window.location.reload(true);
-      console.log("Fotos Local: ", this.state.photo);
     }).catch((error) => {
-      console.log("Fotos Local: ", this.state.photo);
+      Alert.error(error.toString());
+      this.setState({disabledDropzone: false});
       this.updateFile(uploadedFile.id, {
         error: true
       });
@@ -107,13 +97,13 @@ class MultiDropzone extends Component {
     return (
       <Container>
         <Content>
-          <Upload onUpload={this.handleUpload} />
+          <Upload onUpload={this.handleUpload} disabledDropzone={this.state.disabledDropzone}/>
           {!!uploadedFiles.length && (
             <FileList files={uploadedFiles} />
           )}
         </Content>
       </Container>
-    );
+    )
   }
 }
 

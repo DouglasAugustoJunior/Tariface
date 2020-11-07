@@ -56,8 +56,11 @@ export default function Register() {
         }
     }, [idUf]);
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+    async function handleSubmit() {
+        if(!idMunicipio) {
+            Alert.warning('Campos Estado e Municipio Obrigatórios!!!')
+            return
+        }
         setLoad(true);
         const enviarFoto = new FormData();
         enviarFoto.append('arquivo', foto);
@@ -83,7 +86,6 @@ export default function Register() {
         }
 
         try {
-            console.log(enviarFoto)
             await api.post('usuario/cadastrarUsuario', data)
             .then(async (resp) => {
                 const id = resp.request.response;
@@ -116,26 +118,26 @@ export default function Register() {
                                 <Row className="show-row">
                                     <Col xs={24} className="show-col">
                                         <p>Nome Completo:</p>
-                                        <Input style={{ width: 470 }} name="nome" type="text" onChange={value => setNome(value)}/>
+                                        <Input required style={{ width: 470 }} name="nome" type="text" onChange={value => setNome(value)}/>
                                     </Col>
                                 </Row>
 
                                 <Row className="show-row" gutter={16}>
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>CPF:</ControlLabel>
-                                        <Input style={{ width: 220 }} id="cpf" onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
+                                        <Input required style={{ width: 220 }} name="cpf" id="cpf" onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
                                     </Col>
 
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>E-mail:</ControlLabel>
-                                        <Input style={{ width: 220 }} name="email" type="email" onChange={value => setEmail(value)}/>
+                                        <Input required style={{ width: 220 }} name="email" type="email" onChange={value => setEmail(value)}/>
                                     </Col>
                                 </Row>
 
                                 <Row className="show-row" gutter={16}>
                                     <Col xs={12} className="show-col">
                                         <ControlLabel>Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} name="senha" type="password" onChange={value => setSenha(value)}/>
+                                        <Input required style={{ width: 220 }} name="senha" type="password" onChange={value => setSenha(value)}/>
                                     </Col>
 
                                     <Col xs={12} className="show-col">
@@ -150,34 +152,34 @@ export default function Register() {
                             <Row className="show-row">
                                 <Col xs={10} className="show-col">
                                     <ControlLabel>Endereço:</ControlLabel>
-                                    <Input type="text" onChange={value => setEndereco(value)}/>
+                                    <Input required name="endereco" type="text" onChange={value => setEndereco(value)}/>
                                 </Col>
 
                                 <Col xs={4} className="show-col">
                                     <ControlLabel>Numero:</ControlLabel>
-                                    <Input style={{ width: 100 }} type="number" onChange={value => setNumeroCasa(value)}/>
+                                    <Input required name="numero" style={{ width: 100 }} type="number" onChange={value => setNumeroCasa(value)}/>
                                 </Col>
 
                                 <Col xs={10} className="show-col">
                                     <ControlLabel>Complemento:</ControlLabel>
-                                    <Input type="text" onChange={value => setComplemento(value)}/>
+                                    <Input required name="complemento" type="text" onChange={value => setComplemento(value)}/>
                                 </Col>
                             </Row>
 
                             <Row className="show-row" gutter={25}>
                                 <Col xs={4} className="show-col">
                                     <ControlLabel>CEP:</ControlLabel>
-                                    <Input type="text" style={{ width: 100 }} id="cep" onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
+                                    <Input required name="cep" type="text" style={{ width: 100 }} id="cep" onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
                                 </Col>
 
                                 <Col xs={10} className="show-col">
                                     <p>Estado:</p>
-                                    <InputPicker data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
+                                    <InputPicker required name="estado" data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
                                 </Col>
 
                                 <Col xs={10} className="show-col">
                                     <p>Municipio:</p>
-                                    <InputPicker disabled={idUf === undefined} data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                    <InputPicker required name="municipio" disabled={idUf === undefined} data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
                                 </Col>
                             </Row>
                         </Row>
@@ -186,30 +188,30 @@ export default function Register() {
                             <Row className="show-row">
                                 <Col xs={12} className="show-col">
                                     <ControlLabel>Titular do Cartão:</ControlLabel>
-                                    <Input name="donoCartao" type="text" onChange={value => setTitularCartao(value)}/>
+                                    <Input required name="titular-cartao" type="text" onChange={value => setTitularCartao(value)}/>
                                 </Col>
 
                                 <Col xs={12} className="show-col">
                                     <p>Validade:</p>
-                                    <DatePicker className="validade-cartao" format="MM/YY" style={{ width: 110 }} onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
+                                    <DatePicker name="validade-cartao" className="validade-cartao" format="MM/YY" style={{ width: 110 }} onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
                                 </Col>
                             </Row>
 
                             <Row className="show-row">
                                 <Col xs={12} className="show-col">
                                     <ControlLabel>Numero do Cartão:</ControlLabel>
-                                    <Input name="num-cartao" type="text" id="num-cartao" onKeyPress={() => FormatMask("#### #### #### ####", "num-cartao")} maxLength="19" onChange={value => setNumeroCartao(value)}/>
+                                    <Input required name="numero-cartao" type="text" id="num-cartao" onKeyPress={() => FormatMask("#### #### #### ####", "num-cartao")} maxLength="19" onChange={value => setNumeroCartao(value)}/>
                                 </Col>
 
                                 <Col xs={12} className="show-col">
                                     <ControlLabel>CSV:</ControlLabel>
-                                    <Input style={{ width: 110 }} maxLength="3" onChange={value => setCsvCartao(value)}/>
+                                    <Input name="csv" required style={{ width: 110 }} maxLength="3" onChange={value => setCsvCartao(value)}/>
                                 </Col>
                             </Row>
                         </Row>
 
                         <div className="group-form-butoes">
-                            <Button type="submit" onClick={handleSubmit} className="bnt-confirm" >Confirmar</Button>
+                            <Button type="submit" className="bnt-confirm" >Confirmar</Button>
                             <Link to="/" className="cancel-register" >Cancelar</Link>
                         </div>
                     </Grid>

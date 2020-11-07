@@ -8,7 +8,7 @@ const FileList = ({ files }) => {
   return (
     <Container>
       {files.map(uploadedFile => (
-        <li key={uploadedFile.id}>
+        <li key={uploadedFile.id + Math.floor(Math.random() * 10000)}>
           <FileInfo>
             <Preview src={uploadedFile.preview} />
             <div>

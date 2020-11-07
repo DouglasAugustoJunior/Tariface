@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {useState} from 'react';
 import { FiTrash2 } from 'react-icons/fi'
 import FormatMask from "../../Utils/FormatMask";

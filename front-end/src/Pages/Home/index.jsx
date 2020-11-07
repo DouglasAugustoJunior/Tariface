@@ -20,7 +20,8 @@ export default function Home() {
     const [usuario, setUsuario] = useState()
     const [modalEditar, setModalEditar] = useState(false);
     const [modalImagens, setModalImagens] = useState(false);
-    const [foto, setFoto] = useState(User);
+    const [fotoPerfil, setFotoPerfil] = useState(User);
+    const [fotosBD, setFotosBD] = useState(true);
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [senha, setSenha] = useState();
@@ -46,54 +47,53 @@ export default function Home() {
     const history = useHistory();
     const id = sessionStorage.getItem('id');
     const errorMessage = errorVisible ? 'Senhas diferentes !' : null;
-    
+
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
     useEffect(() => {
         api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
         .then(response => {
-            const getNome = response.data.nome;
-            const getSaldo = response.data.saldo;
-            const getCartoes = response.data.cartoes;
-            const getSenha = response.data.senha;
-            const getCpf = response.data.cpf ;
-            const getEmail = response.data.email ;
-            const getLogradouro = response.data.endereco.logradouro ;
-            const getNumero = response.data.endereco.numero ;
-            const getComplemento = response.data.endereco.complemento ;
-            const getCep = response.data.endereco.cep ;
-            const getEstado = response.data.endereco.municipio.uf.nome ;
-            const getMunicipio = response.data.endereco.municipio.nome ;
-            const getHistorico = response.data.historico.map(tsc => {
+            const getNome        = response.data.nome;
+            const getSaldo       = response.data.saldo;
+            const getCartoes     = response.data.cartoes;
+            const getSenha       = response.data.senha;
+            const getCpf         = response.data.cpf;
+            const getEmail       = response.data.email;
+            const getLogradouro  = response.data.endereco.logradouro;
+            const getNumero      = response.data.endereco.numero;
+            const getComplemento = response.data.endereco.complemento;
+            const getCep         = response.data.endereco.cep;
+            const getEstado      = response.data.endereco.municipio.uf.nome;
+            const getMunicipio   = response.data.endereco.municipio.nome;
+            const getFotos       = response.data.imagens;
+            const ativarBotao    = getFotos.length >= 8 ? false : true;
+            const getHistorico   = response.data.historico.map(tsc => {
                 return {
                     data: format(new Date(tsc.dataCriacao), 'dd/MM/yy hh:mm'),
                     transacao: `Efetuado ${tsc.tipo.nome} de R$: ${tsc.valor.toString().replace(".", ",")}`
                 }
             });
-            response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
-            response.data.imagens.forEach(foto => {
-                if(foto.perfil) {
-                    const getFoto = foto.url;
-                    setFoto(getFoto)
-                }
-            });
+
+            if(getFotos.length < 8) { setModalImagens(true) }
             
-            setNome(getNome);
-            setCpf(getCpf);
+            getFotos.forEach(foto => { if(foto.perfil) setFotoPerfil(foto.url) });
+            setFotosBD(ativarBotao);
+            setHistorico(getHistorico.reverse());
+            setComplemento(getComplemento);
+            setEndereco(getLogradouro);
+            setMunicipio(getMunicipio);
+            setUsuario(response.data);
+            setNumeroCasa(getNumero);
+            setConfSenha(getSenha);
+            setCartoes(getCartoes);
             setEmail(getEmail);
             setSenha(getSenha);
-            setConfSenha(getSenha);
-            setEndereco(getLogradouro);
-            setNumeroCasa(getNumero);
-            setComplemento(getComplemento);
-            setCep(getCep);
-            setUf(getEstado);
-            setMunicipio(getMunicipio);
-            setNome(getNome);
             setSaldo(getSaldo);
-            setCartoes(getCartoes);
-            setHistorico(getHistorico.reverse());
-            setUsuario(response.data);
+            setNome(getNome);
+            setUf(getEstado);
+            setNome(getNome);
+            setCpf(getCpf);
+            setCep(getCep);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [atualiza]);
@@ -114,8 +114,8 @@ export default function Home() {
 
     async function handleSubmitUser(event) {
         event.preventDefault();
-        const enviarFoto = new FormData();
-        enviarFoto.append('arquivo', foto);
+        const enviarfotoPerfil = new FormData();
+        enviarfotoPerfil.append('arquivo', fotoPerfil);
 
         const data = {
             "id": id,
@@ -137,7 +137,7 @@ export default function Home() {
         try {
             await api.put('/usuario/atualizarUsuario', data)
             .then(async () => {
-                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
+                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarfotoPerfil)
                 Alert.success('Dados atualizado com sucesso');
                 setAtualiza(!atualiza)
                 closeModalEditar();
@@ -204,6 +204,12 @@ export default function Home() {
 
     function openModalCartao() { setModalCartao(true) }
 
+    function closeModalImagens() { setModalImagens(false) }
+
+    function activeButton() {
+        fotosBD === true && setFotosBD(false);
+    }
+
     function closeModalEditar() {
         setAtualiza(!atualiza);
         setModalEditar(false);
@@ -227,8 +233,7 @@ export default function Home() {
                         <span className="nome-usuario"> {nome} </span>
                         <span className="saldo-usuario"> Saldo R$: {saldo} </span>
                    </div>
-                   
-                    <Dropdown icon={<img src={foto} alt="" className="img-usuario"/>} >
+                    <Dropdown icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalCartao}><FiCreditCard/> Add Cartão</Dropdown.Item>
                         <Dropdown.Item onSelect={logoff}><FiLogOut/> Sair</Dropdown.Item>
@@ -276,8 +281,8 @@ export default function Home() {
                         <Grid id="modal-edital-perfil" fluid>
                         <Row className="show-row">
                             <Col xs={6} className="show-col field-photo">
-                                <SimpleDropzone onFileUpload={setFoto}/>
-                                <p>Foto de perfil</p>
+                                <SimpleDropzone onFileUpload={setFotoPerfil}/>
+                                <p>fotoPerfil de perfil</p>
                             </Col>
 
                             <Col xs={18} className="show-col">
@@ -391,17 +396,21 @@ export default function Home() {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={modalImagens} onHide={() => !modalImagens}>
+            <Modal show={modalImagens} onHide={closeModalImagens} backdrop="static">
                 <Modal.Header closeButton={false} >
                     <Modal.Title>Fotos para Reconhecimento Facial</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>
                         Para utilizar a funcionalidade de reconhecimento facial, você deve enviar pelo
-                        menos 8 fotos de boa qualidade onde esteja sozinho para o sistema.
+                        menos 7 fotos de boa qualidade onde esteja sozinho para o sistema.
+                        Selecione uma imagem por vez.
                     </p>
-                    <MultiDropzone />
+                    <MultiDropzone activeButton={activeButton}/>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={closeModalImagens} disabled={fotosBD} appearance="primary">Fechar</Button>
+                </Modal.Footer>
             </Modal>
         </div>
     )
