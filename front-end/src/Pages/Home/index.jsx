@@ -41,6 +41,7 @@ export default function Home() {
     const [csvCartao, setCsvCartao] = useState();
     const [cartoes, setCartoes] = useState([]);
     const [historico, setHistorico] = useState([]);
+    const [atualiza, setAtualiza] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const history = useHistory();
     const id = sessionStorage.getItem('id');
@@ -65,13 +66,10 @@ export default function Home() {
             const getMunicipio = response.data.endereco.municipio.nome ;
             const getHistorico = response.data.historico.map(tsc => {
                 return {
-                    data: format(new Date(tsc.dataCriacao), 'dd/MM/yy'),
-                    transacao: `Credito de R$: ${tsc.valor} adicionado`
+                    data: format(new Date(tsc.dataCriacao), 'dd/MM/yy hh:mm'),
+                    transacao: `Efetuado ${tsc.tipo.nome} de R$: ${tsc.valor.toString().replace(".", ",")}`
                 }
             });
-
-            console.log("Fotos DB: ", response.data.imagens.length)
-
             response.data.imagens.length >= 8 ? setModalImagens(false) : setModalImagens(true);
             response.data.imagens.forEach(foto => {
                 if(foto.perfil) {
@@ -94,11 +92,11 @@ export default function Home() {
             setNome(getNome);
             setSaldo(getSaldo);
             setCartoes(getCartoes);
-            setHistorico(getHistorico);
+            setHistorico(getHistorico.reverse());
             setUsuario(response.data);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [atualiza]);
 
     useEffect(() => {
         if(idUf !== undefined) {
@@ -139,8 +137,9 @@ export default function Home() {
         try {
             await api.put('/usuario/atualizarUsuario', data)
             .then(async () => {
-                enviarFoto.length > 0 && await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
+                await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarFoto)
                 Alert.success('Dados atualizado com sucesso');
+                setAtualiza(!atualiza)
                 closeModalEditar();
             });
         } catch (error) {
@@ -183,6 +182,13 @@ export default function Home() {
     async function updateSaldo() {
         await api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
         .then((response) => {
+            const getHistorico = response.data.historico.map(tsc => {
+                return {
+                    data: format(new Date(tsc.dataCriacao), 'dd/MM/yy'),
+                    transacao: `Efetuado ${tsc.tipo.nome} de R$: ${tsc.valor}`
+                }
+            });
+            setHistorico(getHistorico.reverse());
             setSaldo(response.data.saldo);
         })
     }
@@ -198,7 +204,10 @@ export default function Home() {
 
     function openModalCartao() { setModalCartao(true) }
 
-    function closeModalEditar() { setModalEditar(false) }
+    function closeModalEditar() {
+        setAtualiza(!atualiza);
+        setModalEditar(false);
+    }
 
     function openModalEditar() {
         setModalEditar(true);
@@ -244,7 +253,7 @@ export default function Home() {
                
                 <div id="extrato-usuario">
                     <h2>Histórico</h2>
-                    <Table height={550} width={500} data={historico}>
+                    <Table height={550} width={500} data={historico} >
                         <Column width={250} align="center" fixed>
                             <HeaderCell>Data</HeaderCell>
                             <Cell dataKey="data" />
@@ -382,14 +391,14 @@ export default function Home() {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={false} onHide={() => !modalImagens}>
+            <Modal show={modalImagens} onHide={() => !modalImagens}>
                 <Modal.Header closeButton={false} >
                     <Modal.Title>Fotos para Reconhecimento Facial</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>
                         Para utilizar a funcionalidade de reconhecimento facial, você deve enviar pelo
-                        menos 8 fotos de boa qualidade onde esteja sozinho.
+                        menos 8 fotos de boa qualidade onde esteja sozinho para o sistema.
                     </p>
                     <MultiDropzone />
                 </Modal.Body>

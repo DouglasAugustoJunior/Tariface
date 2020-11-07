@@ -12,6 +12,14 @@ class MultiDropzone extends Component {
     photo: 0
   };
 
+  // componentDidUpdate(prevProps) {
+  //   if(prevProps.observer !== this.state.observer) {
+  //     const http = this.state.observer
+  //     // http.then((response) => {console.log("Deu bom: ", response)})
+  //     console.log(typeof http)
+  //   } 
+  // }
+
   async componentDidMount() {
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
     // const response = await api.get("posts");
@@ -28,7 +36,7 @@ class MultiDropzone extends Component {
     // });
   }
 
-  handleUpload = files => {
+  handleUpload = async files => {
     const uploadedFiles = files.map(file => ({
       file,
       id: uniqueId(),
@@ -46,7 +54,6 @@ class MultiDropzone extends Component {
     });
 
     uploadedFiles.forEach(this.processUpload)
-      // this.state.photo >= 8 && window.location.reload(true);
   };
 
   updateFile = (id, data) => {
@@ -59,13 +66,13 @@ class MultiDropzone extends Component {
     });
   };
 
-  processUpload = uploadedFile => {
+  processUpload = async uploadedFile => {
     const id = sessionStorage.getItem('id');
     const data = new FormData();
 
     data.append("arquivo", uploadedFile.file, uploadedFile.name);
     
-    api.post(`imagem/upload?idUsuario=${id}`, data, {
+    return await api.post(`imagem/upload?idUsuario=${id}`, data, {
       onUploadProgress: e => {
         const progress = parseInt(Math.round((e.loaded * 100) / e.total));
 
@@ -80,8 +87,10 @@ class MultiDropzone extends Component {
         id: response.data._id,
         url: response.data.url
       });
-      console.log("Fotos Local: ", this.state.photo)
-    }).catch(() => {
+      this.state.photo > 8 && window.location.reload(true);
+      console.log("Fotos Local: ", this.state.photo);
+    }).catch((error) => {
+      console.log("Fotos Local: ", this.state.photo);
       this.updateFile(uploadedFile.id, {
         error: true
       });

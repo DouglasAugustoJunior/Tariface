@@ -45,7 +45,7 @@ export default function Card(props) {
         event.preventDefault();
         try {
             if(saldo !== undefined) {
-                api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${parseFloat(saldo)}`)
+                api.post(`usuario/adicionaSaldo?idUsuario=${id}&valor=${saldo.replace(".", "").replace(",", ".")}`)
                 .then(() => {
                     props.updateSaldo();
                     Alert.success(`Saldo adicionado com sucesso`);

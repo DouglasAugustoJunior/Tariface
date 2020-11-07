@@ -16,7 +16,7 @@ const SimpleDropzone = ({ onFileUpload }) => {
     onFileUpload(file);
   }, [onFileUpload]);
 
-  const { getRootProps, getInputProps } = useDropzone({onDrop, accept: 'image/*'});
+  const { getRootProps, getInputProps } = useDropzone({onDrop, accept: 'image/*', multiple: false});
 
   return (
     <div className="simple-dropzone" {...getRootProps()}>
