@@ -7,14 +7,16 @@
 #pragma endregion Includes
 
 #pragma region Config_Wifi
-const char* ssid     = "2G_costa";      // Nome da rede
-const char* password = "32226486wslha"; // Senha da rede
+const char* ssid     = "Família_Silva";      // Nome da rede
+const char* password = "N40T3mS3nh4"; // Senha da rede
+// const char* ssid     = "2G_costa";      // Nome da rede
+// const char* password = "32226486wslha"; // Senha da rede
 // const char* ssid     = "abner_conect";
 // const char* password = "362204aps";
 #pragma endregion Config_Wifi
 
 #pragma region Config_Server
-String enderecoServidor         = "192.168.0.10";                      // Endereço do servidor
+String enderecoServidor         = "192.168.0.105";                      // Endereço do servidor
 String caminhoServidor          = "/api/imagem/reconhecimentoFacial";  // Diretório para enviar a imagem
 String part_boundary            = "RandomBoundaryPartsImagesTCCBrave"; // Tamanho limite das partes da imagem
 String key                      = "7ea071e9a6f4462eb0fc31ba2ca3ed5c";  // Chave para acessar
@@ -22,6 +24,7 @@ const int portaServidor         = 80;                                  // Porta 
 WiFiClient cliente;                                                    // Cliente que acessa o servidor
 const int tempoIntervalo        = 30000;                               // Tempo entre cada imagem HTTP POST
 unsigned long horaUltimaEnviada = 0;                                   // Última vez que a imagem foi enviada
+bool emProcessamento            = false;                               // Se pode fazer um requisição
 #pragma endregion Config_Server
 
 #pragma region Config_Camera
@@ -52,6 +55,13 @@ camera_config_t config;  // Recebe configurações de inicialização da câmera
 camera_fb_t * fb       = NULL; // Usado para tirar foto da câmera, Frame Buffer
 esp_err_t iniciaCamera = NULL; // Usado para definir os status da câmera nas operações e enviar os blocos HTTP
 #pragma endregion Config_Camera
+
+#pragma region Portas
+#define BOTAO 13
+#define LED_BRANCO 4
+#define LED_VERMELHO 12
+#define LED_VERDE 16
+#pragma endregion Portas
 
 void iniciaSerial(){
   Serial.begin(115200);         // Monitor Serial
@@ -93,6 +103,10 @@ void iniciarCamera(){
 
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // desabilita detector de queda de energia
+  pinMode(LED_BRANCO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(LED_VERMELHO, OUTPUT);
+  pinMode(BOTAO, INPUT);
 
   iniciaSerial();
 
@@ -134,27 +148,32 @@ void setup() {
 
   iniciarCamera();
 
-  capturaEEnvia();
 }
 
 void loop() {
   if(WiFi.status() == WL_CONNECTION_LOST){ // Se a conexão for perdida
     Serial.println("A conexão com a rede Wifi foi perdida!");
   }
-  unsigned long horaAtual = millis();
-  if (horaAtual - horaUltimaEnviada >= tempoIntervalo) {
+  if(!digitalRead(BOTAO) && !emProcessamento){ // Se for pressionado
+    emProcessamento = true;
     capturaEEnvia();
-    horaUltimaEnviada = horaAtual;
   }
 }
 
 String capturaEEnvia() {
   String pegaTudo;
   String pegaCorpo;
+  digitalWrite(LED_BRANCO,HIGH); // Acende a luz de processamento
 
   fb = esp_camera_fb_get(); // Tira foto
   if(!fb) { // Caso ocorra erro na foto
     Serial.println("Falha ao capturar imagem!");
+    digitalWrite(LED_BRANCO,LOW); // Apaga a luz de processamento
+    for(int i = 0; i< 5; i++){
+      digitalWrite(LED_VERMELHO,HIGH);
+      delay(500);
+      digitalWrite(LED_VERMELHO, LOW);
+    }
     delay(1000);
     ESP.restart();
   }
@@ -221,14 +240,71 @@ String capturaEEnvia() {
       }
       if (pegaCorpo.length()>0) { break; }
     }
-    Serial.println();
-    Serial.println("Reposta:");
+
+    pegaCorpo = pegaCorpo.substring(5,pegaCorpo.length() -7);
+    
+    Serial.println("Resposta:");
     Serial.println(pegaCorpo);
+    digitalWrite(LED_BRANCO,LOW); // Apaga a luz de processamento
+    
+    if(pegaCorpo.equals("Liberado")){ // Liberado
+      for(int i=0; i< 3;i++){
+        Serial.print("Liberado");
+        digitalWrite(LED_VERDE,HIGH); // Acende a luz de sucesso
+        delay(500);
+        digitalWrite(LED_VERDE,LOW); // Apaga a luz de sucesso
+        delay(500);
+      }
+    }else if(pegaCorpo.equals("Nenhum rosto identificado na imagem.")){ // Nenhum rosto encontrado
+      for(int i=0; i< 2;i++){
+        Serial.print("Nenhum rosto identificado na imagem.");
+        digitalWrite(LED_VERMELHO,HIGH); // Acende a luz de Erro
+        delay(500);
+        digitalWrite(LED_VERMELHO,LOW); // Apaga a luz de Erro
+        delay(500);
+      }
+    }else if(pegaCorpo.equals("Nenhuma correspondência para esse rosto foi encontrada.")){ // Nenhum cadastro
+      for(int i=0; i< 3;i++){
+        Serial.print("Nenhuma correspondência para esse rosto foi encontrada.");
+        digitalWrite(LED_VERMELHO,HIGH); // Acende a luz de Erro
+        delay(500);
+        digitalWrite(LED_VERMELHO,LOW); // Apaga a luz de Erro
+        delay(500);
+      }
+    }else if(pegaCorpo.equals("Saldo insuficiente!")){ // Saldo Insuficiente
+      for(int i=0; i< 4;i++){
+        Serial.print("Saldo Insuficiente");
+        digitalWrite(LED_VERMELHO,HIGH); // Acende a luz de Erro
+        delay(500);
+        digitalWrite(LED_VERMELHO,LOW); // Apaga a luz de Erro
+        delay(500);
+      }
+    }else{
+        digitalWrite(LED_BRANCO,LOW); // Apaga a luz de processamento
+        for(int i = 0; i< 1; i++){
+          Serial.print("Erro no servidor");
+          digitalWrite(LED_VERMELHO,HIGH);
+          delay(500);
+          digitalWrite(LED_VERMELHO, LOW);
+          delay(500);
+        }
+        emProcessamento = false;  
+    }
     cliente.stop();
   }
   else {
+    digitalWrite(LED_BRANCO,LOW); // Apaga a luz de processamento
+    for(int i = 0; i< 1; i++){
+      Serial.print("Erro no servidor");
+      digitalWrite(LED_VERMELHO,HIGH);
+      delay(500);
+      digitalWrite(LED_VERMELHO, LOW);
+      delay(500);
+    }
+    emProcessamento = false;
     pegaCorpo = "Conexão com " + enderecoServidor +  " falhou.";
     Serial.println(pegaCorpo);
   }
+  emProcessamento = false;
   return pegaCorpo;
 }
