@@ -294,7 +294,9 @@ namespace AspNet_UploadImagem.Handlers
                     else
                     {
                         Usuario usuario = _usuarioRepository.PegaPorPersonID(personID: resultadosSimilares[0].Candidates[0].PersonId);
-                        return $"Rosto é semelhante a pessoa {usuario.Nome} com confiança de: {resultadosSimilares[0].Candidates[0].Confidence * 100}%. "+ RealizaDebito(usuario: usuario);
+                        if (RealizaDebito(usuario: usuario)) return "Liberado";
+                        else return "Saldo insuficiente!";
+                        //return $"Rosto é semelhante a pessoa {usuario.Nome} com confiança de: {resultadosSimilares[0].Candidates[0].Confidence * 100}%. "+ RealizaDebito(usuario: usuario);
                     }
                 }
                 else
@@ -305,10 +307,12 @@ namespace AspNet_UploadImagem.Handlers
             }
             catch(APIErrorException ef)
             {
-                throw new Exception("Ocorreu um erro na Face API ao reconhecer rosto: "+ ef.Response.Content);
+                //throw new Exception("Ocorreu um erro na Face API ao reconhecer rosto: "+ ef.Response.Content);
+                return "Ocorreu um erro na Face API ao reconhecer rosto";
             }catch(Exception e)
             {
-                throw new Exception("Ocorreu um erro ao ao realizar reconhecimento: ", e);
+                //throw new Exception("Ocorreu um erro ao ao realizar reconhecimento: ", e);
+                return "Ocorreu um erro ao ao realizar reconhecimento";
             }
         }
 
@@ -317,7 +321,7 @@ namespace AspNet_UploadImagem.Handlers
         /// </summary>
         /// <param name="usuario">Usuário identificado na catraca</param>
         /// <returns>Mensagem se foi liberado ou não</returns>
-        private string RealizaDebito(Usuario usuario)
+        private bool RealizaDebito(Usuario usuario)
         {
             if (usuario.Saldo >= Tarifas.Comum)
             {
@@ -326,16 +330,18 @@ namespace AspNet_UploadImagem.Handlers
                 if (result != null)
                 {
                     _historicoHandler.CriaHistorico(usuario: usuario, ETipoTransacao.Debito, EStatusTransacao.Concluida, Tarifas.Comum);
-                    return $"Catraca liberada, saldo atual R${usuario.Saldo}";
+                    //return $"Catraca liberada, saldo atual R${usuario.Saldo}";
+                    return true;
                 }
                 else
                 {
                     _historicoHandler.CriaHistorico(usuario: usuario, ETipoTransacao.Debito, EStatusTransacao.Cancelada, Tarifas.Comum);
-                    return "Não foi possível realizar o débito, tente novamente.";
+                    //return "Não foi possível realizar o débito, tente novamente.";
+                    return false;
                 }
 
             }
-            else return "Saldo insuficiente para debitar passagem.";
+            else return false;
         }
 
         /// <summary>
