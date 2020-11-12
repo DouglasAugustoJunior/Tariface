@@ -32,3 +32,6 @@ msbuild.wrn
 .vs/
 
 /back-end/EstudosFaceAPI/AspNet_UploadImagem/appsettings.json
+back-end/EstudosFaceAPI/ReconhecimentoFacialPersonGroupConsole/packages/Microsoft.Azure.CognitiveServices.Vision.Face.2.6.0-preview.1/Microsoft.Azure.CognitiveServices.Vision.Face.2.6.0-preview.1.nupkg
+back-end/EstudosFaceAPI/ReconhecimentoFacialPersonGroupConsole/packages/Microsoft.Azure.CognitiveServices.Vision.Face.2.6.0-preview.1/lib/netstandard1.4/Microsoft.Azure.CognitiveServices.Vision.Face.dll
+back-end/EstudosFaceAPI/ReconhecimentoFacialPersonGroupConsole/packages/Microsoft.Azure.CognitiveServices.Vision.Face.2.6.0-preview.1/lib/netstandard2.0/Microsoft.Azure.CognitiveServices.Vision.Face.dll
