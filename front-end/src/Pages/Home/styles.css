@@ -1,99 +1,104 @@
-#home-container {
-    display: flex;
-    flex-direction: column;
-    color: black;
-    font-family: Kufam, cursive;
-    padding: 100px 20px 20px 20px;
+h2 { /* Títulos */
+  text-align: center;
 }
 
-#header-home {
-    width: 100%;
-    display: flex;
+#home-container { /* Corpo */
+  display: flex;
+  flex-direction: column;
+  color: black;
+  font-family: Kufam, cursive;
+  padding: 100px 20px 20px 20px;
+}
+
+#header-home { /* Navbar */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #277da1;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  color: #fff;
+  z-index: 10;
+  padding: 0 20px;
+}
+
+.info-usuario { /* Div dos dados do usuário navbar */
+  display: flex;
+  align-items: center;
+}
+
+.textos-usuario { /* Nome e saldo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+
+@media screen and (max-width: 500px) { /* Ajusta os dados do usuário na resolução menor */
+    .textos-usuario {
+        margin-right: 0px;
+    }
+}
+
+.negrito { /* Saldo no navbar em negrito */
+    font-weight: bolder;
+}
+
+img.img-usuario { /* Imagem navbar */
+  width: 60px;
+  height: 60px;
+  margin-left: -10px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+#group-cartoes { /* Div cartões */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0 0 5% 0;
+}
+
+#extrato-usuario { /* Extrato em desktop */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+@media screen and (max-width: 991px) { /* Centraliza o extrato nas resoluções menores */
+  #extrato-usuario {
     align-items: center;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    background-color: #277da1;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    color: #FFF;
-    z-index: 10;
+  }
 }
 
-.info-usuario {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.rs-table { /* Bordas da tabela */
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }
 
-.textos-usuario {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 20px;
+.modal-add-cartao div {
+  margin-bottom: 10px;
+  font-family: Kufam, cursive;
 }
 
-img.img-usuario{
-    width: 60px;
-    height: 60px;
-    margin-left: 20px;
-    border: 1px solid black;
-    border-radius: 50%;
-    background-color: #FFF;
-}
-
-.menu-usuario {
-    background-color: red;
-}
-
-section#home-content {
-    display: flex;
-    justify-content: space-between;
-}
-
-#group-cartoes {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-around;
-    width: 100%;
-    margin-top: 5%;
-    margin-right: 20px;
-}
-
-#extrato-usuario {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-#extrato-usuario h2{
-    margin-right: 30%;
-}
-
-.rs-table {
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-}
-
-.modal-add-cartao div{
-    margin-bottom: 10px;
-    font-family: Kufam, cursive;
-}
-
-.rs-dropdown a:hover, .rs-dropdown a:focus{
-    background-color: transparent;
+.rs-dropdown a:hover,
+.rs-dropdown a:focus {
+  background-color: transparent;
 }
 
 .show-row {
-    /* border: 1px red dashed; */
-    margin-bottom: 10px;
+  /* border: 1px red dashed; */
+  margin-bottom: 10px;
 }
 
 .show-col {
-    /* border: 1px blue solid; */
+  /* border: 1px blue solid; */
 }
 
 #modal-edital-perfil {
-    width: 95%;
+  width: 95%;
 }

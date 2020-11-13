@@ -106,14 +106,14 @@ export default function Card(props) {
                 <Modal.Body>
                     <Form>
                         <FormGroup>
-                            <ControlLabel>Valor á ser adicionado:</ControlLabel>
-                            <Input id="add-valor" style={{ width: 200 }} type="text" placeholder="R$:" onChange={value => setSaldo(value)}/>
+                            <ControlLabel>Valor a ser adicionado:</ControlLabel>
+                            <Input id="add-valor" style={{ width: 200 }} type="text" maxLength="6" placeholder="R$:" onChange={value => setSaldo(value)}/>
                         </FormGroup>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleAddSaldo} appearance="primary">Adicionar</Button>
-                    <Button onClick={closeModalSaldo} >Cancel</Button>
+                    <Button onClick={closeModalSaldo} >Cancelar</Button>
                 </Modal.Footer>
             </Modal>
 

@@ -5,9 +5,7 @@ import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
 import api from '../../api';
-import { Table, Dropdown, Modal, Form, ControlLabel,
- FormControl, Button, InputPicker, DatePicker, Grid,
- Row, Col, Input, Alert } from 'rsuite';
+import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input, Alert } from 'rsuite';
 import MultiDropzone from '../../Components/MultiDropzone';
 import SimpleDropzone from '../../Components/SimpleDropzone';
 import Card from '../../Components/Card';
@@ -15,6 +13,8 @@ import User from '../../Assets/user.png';
 import './styles.css';
 
 export default function Home() {
+
+    //#region Constantes
     const { Column, HeaderCell, Cell } = Table;
     const [modalCartao, setModalCartao] = useState(false);
     const [usuario, setUsuario] = useState()
@@ -47,6 +47,7 @@ export default function Home() {
     const history = useHistory();
     const id = sessionStorage.getItem('id');
     const errorMessage = errorVisible ? 'Senhas diferentes !' : null;
+    //#endregion Constantes
 
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
@@ -226,14 +227,15 @@ export default function Home() {
 
     return (
         <div id="home-container">
+
            <header id="header-home">
                <h2>TariFace</h2>
                <div className="info-usuario">
                    <div className="textos-usuario">
                         <span className="nome-usuario"> {nome} </span>
-                        <span className="saldo-usuario"> Saldo R$: {saldo} </span>
+                        <span className="negrito"> Saldo R${saldo} </span>
                    </div>
-                    <Dropdown icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
+                    <Dropdown menuStyle={{ 'margin-left': -50, border: '4px solid #ddd' }} icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalCartao}><FiCreditCard/> Add Cartão</Dropdown.Item>
                         <Dropdown.Item onSelect={logoff}><FiLogOut/> Sair</Dropdown.Item>
@@ -241,36 +243,46 @@ export default function Home() {
                </div>
            </header>
 
-           <section id="home-content">
-               <div id="group-cartoes">
-                    { cartoes.map(cartao => (
-                        <Card key={`cartao-${cartao.id}`}
-                            titular={cartao.titular}
-                            numero={cartao.numero}
-                            validade={cartao.validade}
-                            csv={cartao.csv}
-                            updateCartao={updateCartao}
-                            updateSaldo={updateSaldo}
-                            id={cartao.id}
-                        />
-                    ))}
-               </div>
-               
-                <div id="extrato-usuario">
-                    <h2>Histórico</h2>
-                    <Table height={550} width={500} data={historico} >
-                        <Column width={250} align="center" fixed>
-                            <HeaderCell>Data</HeaderCell>
-                            <Cell dataKey="data" />
-                        </Column>
+           <Row gutter={16} id="" className="show-grid">
 
-                        <Column width={250} align="center" fixed>
-                            <HeaderCell>Transação</HeaderCell>
-                            <Cell dataKey="transacao" />
-                        </Column>
-                    </Table>
-                </div>
-           </section>
+               <Col xs={24} sm={24} md={15} lg={17}>
+                    <h2>Cartões</h2>
+                    <div id="group-cartoes" >
+                        { cartoes.map(cartao => (
+                            <Card key={`cartao-${cartao.id}`}
+                                titular={cartao.titular}
+                                numero={cartao.numero}
+                                validade={cartao.validade}
+                                csv={cartao.csv}
+                                updateCartao={updateCartao}
+                                updateSaldo={updateSaldo}
+                                id={cartao.id}
+                            />
+                        ))}
+
+                    </div>
+               </Col>
+               
+                <Col id="extrato-usuario" xs={24} sm={24} md={9} lg={7}>
+                    <div>
+                        <h2>Histórico</h2>
+                        <Table height={460} width={360} data={historico} >
+
+                            <Column width={130} align="center" resizable>
+                                <HeaderCell>Data</HeaderCell>
+                                <Cell dataKey="data" className="negrito"/>
+                            </Column>
+
+                            <Column width={230} align="center" resizable>
+                                <HeaderCell>Transação</HeaderCell>
+                                <Cell dataKey="transacao" />
+                            </Column>
+
+                        </Table>
+                    </div>
+                </Col>
+
+           </Row>
 
            <Modal size="md" show={modalEditar} onHide={closeModalEditar} dialogClassName="modal-editar-perfil">
                 <Modal.Header>
@@ -280,7 +292,8 @@ export default function Home() {
                     <Form>
                         <Grid id="modal-edital-perfil" fluid>
                         <Row className="show-row">
-                            <Col xs={6} className="show-col field-photo">
+
+                            <Col xs={15} sm={6} md={6} lg={6} className="show-col field-photo"> {/* Imagem Perfil */}
                                 <SimpleDropzone onFileUpload={setFotoPerfil}/>
                                 <p>fotoPerfil de perfil</p>
                             </Col>
@@ -412,6 +425,7 @@ export default function Home() {
                     <Button onClick={closeModalImagens} disabled={fotosBD} appearance="primary">Fechar</Button>
                 </Modal.Footer>
             </Modal>
+
         </div>
     )
 }

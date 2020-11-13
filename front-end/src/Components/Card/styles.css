@@ -1,85 +1,90 @@
 div.card-cartao {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    background-color: #FFF;
-    border-radius: 10px;
-    padding: 20px;
-    width: 300px;
-    height: 45%;
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  height: 45%;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  margin-bottom: 15px;
 }
 
-div.card-cartao  p {
-    margin-top: 10px;
+div.card-cartao p {
+  margin-top: 10px;
 }
 
 div.data-cartao {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 div.data-cartao div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 10px;
 }
 
 div.buttons-card {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }
 
 div.buttons-card button {
-    /* text-decoration: none;
+  /* text-decoration: none;
     padding: 5px 10px; */
-    margin-top: 20px;
-    /* border-radius: 5px; */
-    color: #FFF;
-    box-shadow: 3px 3px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  /* border-radius: 5px; */
+  color: #fff;
+  box-shadow: 3px 3px rgba(0, 0, 0, 0.5);
 }
 
 div.buttons-card button:hover {
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
-    color: white;
-    transition: 0.2s;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  color: white;
+  transition: 0.2s;
 }
 
 div.buttons-card button.novo-cartao {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 div.buttons-card button.editar-cartao {
-    background-color: var(--secondary-green);
+  background-color: var(--secondary-green);
 }
 
 .dataCartao {
-    display: flex;
+  display: flex;
 }
 
-.dataCartao div{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 10px;
+.dataCartao div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
 }
 
 .btn-excluir-cartao {
-    position: absolute;
-    bottom: 20px;
-    left: 30px;
-    background-color: #FFF;
-    cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  left: 30px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.btn-excluir-cartao label {
+  bottom: 30px;
 }
 
 .btn-excluir-cartao svg {
-    color: #495057;
+  color: #495057;
 }
 
 .btn-excluir-cartao svg:hover {
-    color: #f94144;
+  color: #f94144;
 }
