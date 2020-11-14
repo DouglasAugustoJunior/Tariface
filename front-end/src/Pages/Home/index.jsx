@@ -249,7 +249,7 @@ export default function Home() {
                </div>
            </header>
 
-           <Row gutter={16} id="" className="show-grid">
+           <Row gutter={16}>
 
                <Col xs={24} sm={24} md={15} lg={17}>
                     <h2>Cartões</h2>
@@ -268,18 +268,18 @@ export default function Home() {
 
                     </div>
                </Col>
-               
+
                 <Col id="extrato-usuario" xs={24} sm={24} md={9} lg={7}>
                     <div>
                         <h2>Histórico</h2>
-                        <Table height={460} width={360} data={historico} >
+                        <Table height={460} width={380} data={historico} >
 
                             <Column width={130} align="center" resizable>
                                 <HeaderCell>Data</HeaderCell>
                                 <Cell dataKey="data" className="negrito"/>
                             </Column>
 
-                            <Column width={230} align="center" resizable>
+                            <Column width={240} align="center" resizable>
                                 <HeaderCell>Transação</HeaderCell>
                                 <Cell dataKey="transacao" />
                             </Column>
@@ -290,96 +290,93 @@ export default function Home() {
 
            </Row>
 
-           <Modal size="md" show={modalEditar} onHide={closeModalEditar} dialogClassName="modal-editar-perfil">
+           <Modal size="md" show={modalEditar} onHide={closeModalEditar} className="modalResponsivo" dialogClassName="modal-editar-perfil">
+
                 <Modal.Header>
                     <Modal.Title>Editar Perfil</Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
+
                     <Form>
+
                         <Grid id="modal-edital-perfil" fluid>
-                        <Row className="show-row">
 
-                            <Col xs={15} sm={6} md={6} lg={6} className="show-col field-photo"> {/* Imagem Perfil */}
+                        <Row gutter={16}>
+
+                            <Col className="space-col" xs={24} sm={24} md={6} lg={6} className="field-photo"> {/* Imagem Perfil */}
                                 <SimpleDropzone onFileUpload={setFotoPerfil}/>
-                                <p>fotoPerfil de perfil</p>
+                                <p>foto de perfil</p>
                             </Col>
 
-                            <Col xs={18} className="show-col">
-                                <Row className="show-row">
-                                    <Col xs={24} className="show-col">
-                                        <p>Nome Completo:</p>
-                                        <Input style={{ width: 490 }} value={nome} id="input_nome" type="text" onChange={value => setNome(value)}/>
-                                    </Col>
-                                </Row>
-
-                                <Row className="show-row" >
-                                    <Col xs={12} className="show-col">
-                                        <ControlLabel>CPF:</ControlLabel>
-                                        <Input style={{ width: 220 }} id="cpf" value={cpf} onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
-                                    </Col>
-
-                                    <Col xs={12} className="show-col">
-                                        <ControlLabel>E-mail:</ControlLabel>
-                                        <Input style={{ width: 220 }} id="input_email" value={email} type="email" onChange={value => setEmail(value)}/>
-                                    </Col>
-                                </Row>
-
-                                <Row className="show-row" >
-                                    <Col xs={12} className="show-col">
-                                        <ControlLabel>Senha:</ControlLabel>
-                                        <Input style={{ width: 220 }} id="input_senha" type="password" onChange={value => setSenha(value)}/>
-                                    </Col>
-
-                                    <Col xs={12} className="show-col">
-                                        <ControlLabel>Confirmar Senha:</ControlLabel>
-                                        <FormControl style={{ width: 220 }} errorMessage={errorMessage} id="input_confSenha" type="password" onChange={value => setConfSenha(value)}/>
-                                    </Col>
-                                </Row>
+                            <Col className="space-col" xs={24} sm={24} md={12} lg={9}>{/* Nome Completo */}
+                                <ControlLabel>Nome Completo:</ControlLabel>
+                                <Input value={nome} id="input_nome" type="text" onChange={value => setNome(value)}/>
                             </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={6} lg={3}>{/* CPF */}
+                                <ControlLabel>CPF:</ControlLabel>
+                                <Input id="cpf" value={cpf} onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={6} lg={6}>{/* Email */}
+                                <ControlLabel>E-mail:</ControlLabel>
+                                <Input id="input_email" value={email} type="email" onChange={value => setEmail(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={6} lg={6}>{/* Senha */}
+                                <ControlLabel>Senha:</ControlLabel>
+                                <Input id="input_senha" type="password" onChange={value => setSenha(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={6} lg={6}>{/* Confirma Senha */}
+                                <ControlLabel>Confirmar Senha:</ControlLabel>
+                                <FormControl errorMessage={errorMessage} style={{width:'100%'}} id="input_confSenha" type="password" onChange={value => setConfSenha(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={18} md={8} lg={6}>{/* Logradouro */}
+                                <ControlLabel>Logradouro:</ControlLabel>
+                                <Input type="text" id="input_endereco" value={endereco} onChange={value => setEndereco(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={6} md={3} lg={3}>{/* Numero */}
+                                <ControlLabel>Numero:</ControlLabel>
+                                <Input maxLength="8" value={numeroCasa} id="input_numero" type="text" onChange={value => setNumeroCasa(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={18} md={7} lg={12}>{/* Complemento */}
+                                <ControlLabel>Complemento:</ControlLabel>
+                                <Input type="text" id="input_complemento" value={complemento} onChange={value => setComplemento(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={6} md={4} lg={3}>{/* CEP */}
+                                <ControlLabel>CEP:</ControlLabel>
+                                <Input type="text" id="cep" value={cep} onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={6} lg={6}>{/* Estado */}
+                                <p>Estado:</p>
+                                <InputPicker data={uf} labelKey="nome" id="input_estado" valueKey="id" type="text" placeholder="Estado" onSelect={value => setIdUf(value)}/>
+                            </Col>
+
+                            <Col className="space-col" xs={24} sm={12} md={10} lg={6}>{/* Municipio */}
+                                <p>Municipio:</p>
+                                <InputPicker disabled={idUf === undefined} data={municipio} labelKey="nome" id="input_municipio" valueKey="id" placeholder="Municipio" type="text" onSelect={value => setIdMunicipio(value)}/>
+                            </Col>
+
                         </Row>
 
-                        <Row className="show-row">
-                            <Row className="show-row">
-                                <Col xs={10} className="show-col">
-                                    <ControlLabel>Logradouro:</ControlLabel>
-                                    <Input type="text" id="input_endereco" value={endereco} onChange={value => setEndereco(value)}/>
-                                </Col>
-
-                                <Col xs={4} className="show-col">
-                                    <ControlLabel>Numero:</ControlLabel>
-                                    <Input style={{ width: 100 }} maxLength="8" value={numeroCasa} id="input_numero" type="text" onChange={value => setNumeroCasa(value)}/>
-                                </Col>
-
-                                <Col xs={10} className="show-col">
-                                    <ControlLabel>Complemento:</ControlLabel>
-                                    <Input type="text" style={{ width: 250 }} id="input_complemento" value={complemento} onChange={value => setComplemento(value)}/>
-                                </Col>
-                            </Row>
-
-                            <Row className="show-row">
-                                <Col xs={4} className="show-col">
-                                    <ControlLabel>CEP:</ControlLabel>
-                                    <Input type="text" style={{ width: 100 }} id="cep" value={cep} onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
-                                </Col>
-
-                                <Col xs={10} className="show-col">
-                                    <p>Estado:</p>
-                                    <InputPicker data={uf} labelKey="nome" id="input_estado" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
-                                </Col>
-
-                                <Col xs={10} className="show-col">
-                                    <p>Municipio:</p>
-                                    <InputPicker disabled={idUf === undefined} data={municipio} labelKey="nome" id="input_municipio" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
-                                </Col>
-                            </Row>
-                        </Row>
                         </Grid>
+
                     </Form>
+
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button onClick={handleSubmitUser} appearance="primary">Ok</Button>
                     <Button onClick={closeModalEditar} appearance="subtle">Cancelar</Button>
                 </Modal.Footer>
+
             </Modal>
 
             <Modal size="xs" show={modalCartao} onHide={closeModalCartao} >

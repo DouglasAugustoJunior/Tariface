@@ -76,3 +76,8 @@
 .rs-loader-backdrop {
     height: 140%;
 }
+
+.modalResponsivo {
+    width: auto;
+    margin: 5%;
+}
