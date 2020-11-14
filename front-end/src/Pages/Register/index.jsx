@@ -189,12 +189,12 @@ export default function Register() {
 
                         <Row className="show-row">
                             <Row className="show-row">
-                                <Col lg={14} md={14} className="show-col">
+                                <Col lg={14} md={14} className="show-col col-ajust-only">
                                     <ControlLabel>Titular do Cartão:</ControlLabel>
                                     <Input required name="titular-cartao" type="text" onChange={value => setTitularCartao(value)}/>
                                 </Col>
 
-                                <Col lg={10} md={10} className="show-col">
+                                <Col lg={10} md={10} className="show-col col-ajust-only">
                                     <p>Validade:</p>
                                     <DatePicker name="validade-cartao" className="validade-cartao" format="MM/YY" onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
                                 </Col>

@@ -1,9 +1,10 @@
-import React from 'react'
-import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom'
-import Login from './Pages/Login'
-import Home from './Pages/Home'
-import Register from './Pages/Register'
-import { isAuthenticated } from "./services/autenticacao"
+import React from 'react';
+import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import Login from './Pages/Login';
+import Home from './Pages/Home';
+import Register from './Pages/Register';
+import Report from './Pages/Report';
+import { isAuthenticated } from "./services/autenticacao";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
@@ -33,6 +34,7 @@ const Routes = () => {
         <Switch>
             <PublicRoute path="/" component={Login}  exact />
             <PrivateRoute path="/home" component={Home} />
+            <PrivateRoute path="/report" component={Report} />
             <PublicRoute path="/register" component={Register} />
             <Route path="*" component={() => <h1>Página não encontrada.</h1>} />
         </Switch>

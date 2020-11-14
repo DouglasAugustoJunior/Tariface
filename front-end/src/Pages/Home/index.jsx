@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import React, {useState, useEffect} from 'react';
-import {FiCreditCard, FiEdit, FiLogOut} from 'react-icons/fi';
+import {FiCreditCard, FiEdit, FiLogOut, FiBarChart2} from 'react-icons/fi';
 import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
 import { format } from 'date-fns';
@@ -249,6 +249,7 @@ export default function Home() {
                     <Dropdown menuStyle={{ 'margin-left': -50, border: '4px solid #ddd' }} icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalCartao}><FiCreditCard/> Add Cartão</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => window.open("/report", "_blank")}><FiBarChart2/> Relatório</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalClose}><FiLogOut/> Sair</Dropdown.Item>
                     </Dropdown>
                </div>

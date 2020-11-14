@@ -31,11 +31,6 @@
     margin-top: 20px;
 }
 
-/* .validade-cartao {
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-} */
-
 #register-container input {
     margin-bottom: 20px;
     width: 250px;
@@ -79,6 +74,10 @@
 
 #form-register input, .rs-picker-date, .rs-picker-input, .rs-form-control-wrapper {
     width: 100%;
+}
+
+.col-ajust-only {
+    margin-top: 20px;
 }
 
 @media(max-width: 1200px) {
