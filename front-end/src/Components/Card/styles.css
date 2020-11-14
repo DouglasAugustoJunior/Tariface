@@ -71,20 +71,13 @@ div.buttons-card button.editar-cartao {
 
 .btn-excluir-cartao {
   position: absolute;
-  bottom: 20px;
+  bottom: 25px;
   left: 30px;
   background-color: #fff;
   cursor: pointer;
-}
-
-.btn-excluir-cartao label {
-  bottom: 30px;
-}
-
-.btn-excluir-cartao svg {
   color: #495057;
 }
 
-.btn-excluir-cartao svg:hover {
+.btn-excluir-cartao:hover {
   color: #f94144;
 }

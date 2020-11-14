@@ -5,7 +5,7 @@ import FormatMask from "../../Utils/FormatMask";
 import { format } from 'date-fns';
 import api from '../../api';
 import { DatePicker, Modal, Button, Form,
- FormGroup, FormControl, ControlLabel, Input, Alert } from 'rsuite';
+ FormGroup, FormControl, ControlLabel, Input, Alert, Popover, Whisper } from 'rsuite';
 import './styles.css';
 
 export default function Card(props) {
@@ -18,6 +18,12 @@ export default function Card(props) {
     const [csvCartao, setCsvCartao] = useState(props.csv);
     const id = sessionStorage.getItem('id');
     api.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
+
+    const speaker = (
+        <Popover title="Excluir cartão ?">
+            <Button onClick={excluirCartao} size="xs" color="red">Confirmar</Button>
+        </Popover>
+        );
 
     async function handleSubmitCard(event) {
         event.preventDefault();
@@ -146,7 +152,9 @@ export default function Card(props) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <a onClick={excluirCartao} title="Excluir Cartão" className="btn-excluir-cartao"><FiTrash2 size={20}/></a>
+                    <Whisper placement="right" trigger="click" speaker={speaker}>
+                        <FiTrash2 className="btn-excluir-cartao" size={20}/>
+                    </Whisper>
                     <Button onClick={handleSubmitCard} appearance="primary">Salvar</Button>
                     <Button onClick={closeModalEditar} >Cancelar</Button>
                 </Modal.Footer>

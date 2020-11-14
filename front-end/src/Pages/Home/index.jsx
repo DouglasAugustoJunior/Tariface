@@ -139,9 +139,15 @@ export default function Home() {
             await api.put('/usuario/atualizarUsuario', data)
             .then(async () => {
                 await api.post(`/imagem/uploadImagemPerfil?idUsuario=${id}`, enviarfotoPerfil)
-                Alert.success('Dados atualizado com sucesso');
-                setAtualiza(!atualiza)
-                closeModalEditar();
+                .then(response => {
+                    if(response.data === "Nenhum rosto detectado na imagem, por favor, tente uma imagem melhor.") {
+                        Alert.error(response.data);
+                    } else {
+                        Alert.success('Dados atualizado com sucesso');
+                        setAtualiza(!atualiza)
+                        closeModalEditar();
+                    }
+                });
             });
         } catch (error) {
             Alert.error('Falha ao atualizar os dados');
