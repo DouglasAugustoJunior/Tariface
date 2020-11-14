@@ -60,7 +60,7 @@ esp_err_t iniciaCamera = NULL; // Usado para definir os status da câmera nas op
 #define BOTAO 13
 #define LED_BRANCO 4
 #define LED_VERMELHO 12
-#define LED_VERDE 16
+#define LED_VERDE 15
 #pragma endregion Portas
 
 void iniciaSerial(){
@@ -247,7 +247,7 @@ String capturaEEnvia() {
     Serial.println(pegaCorpo);
     digitalWrite(LED_BRANCO,LOW); // Apaga a luz de processamento
     
-    if(pegaCorpo.equals("Liberado")){ // Liberado
+    if(pegaCorpo.equals("iberado")){ // Liberado
       for(int i=0; i< 3;i++){
         Serial.print("Liberado");
         digitalWrite(LED_VERDE,HIGH); // Acende a luz de sucesso
