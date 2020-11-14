@@ -1,0 +1,9 @@
+#report-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#report-content {
+    width: 70%;
+}

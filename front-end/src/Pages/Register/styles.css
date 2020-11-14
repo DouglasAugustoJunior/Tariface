@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 50px 50px;
+    padding: 50px;
     font-family: Kufam, cursive;
 }
 
@@ -30,11 +30,6 @@
     justify-content: space-around;
     margin-top: 20px;
 }
-
-/* .validade-cartao {
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-} */
 
 #register-container input {
     margin-bottom: 20px;
@@ -77,7 +72,69 @@
     height: 140%;
 }
 
-.modalResponsivo {
-    width: auto;
-    margin: 5%;
+#form-register input, .rs-picker-date, .rs-picker-input, .rs-form-control-wrapper {
+    width: 100%;
+}
+
+.col-ajust-only {
+    margin-top: 20px;
+}
+
+@media(max-width: 1200px) {
+    #form-container {
+        width: 80%;
+    }
+}
+
+@media(max-width: 992px) {
+    .show-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .group-form-butoes {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .group-form-butoes  a, .group-form-butoes  button {
+        margin: 0px;
+    }
+
+    #form-container {
+        width: 100%;
+    }
+
+    .col-ajust {
+        margin-top: 20px;
+    }
+}
+
+@media(max-width: 530px) {
+    .group-form-butoes {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .group-form-butoes a {
+        margin-top: 20px;
+    }
+
+    .group-form-butoes  a, .group-form-butoes  button {
+        width: 100%;
+    }
+
+    #form-register input,  .rs-picker-date {
+        width: 100%;
+    }
+
+}
+
+@media(max-width: 315px) {
+    #form-container h1 {
+        font-size: 30px;
+    }
 }

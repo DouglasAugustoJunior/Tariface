@@ -109,103 +109,106 @@ export default function Register() {
                 <Form id="form-register" onSubmit={handleSubmit} >
                     <Grid fluid>
                         <Row className="show-row">
-                            <Col xs={6} className="field-photo">
+                            <Col lg={6} md={24} xs={24} className="show-col field-photo">
                                 <SimpleDropzone onFileUpload={setFoto}/>
                                 <p>Foto de perfil</p>
                             </Col>
 
-                            <Col xs={18} >
+                            <Col lg={18} xs={24}className="show-col">
                                 <Row className="show-row">
-                                    <Col xs={24} >
+                                    <Col lg={24} md={24} xs={24} className="show-col col-ajust">
                                         <p>Nome Completo:</p>
-                                        <Input required style={{ width: 470 }} name="nome" type="text" onChange={value => setNome(value)}/>
+                                        <Input required name="nome" type="text" onChange={value => setNome(value)}/>
                                     </Col>
                                 </Row>
 
                                 <Row className="show-row" gutter={16}>
-                                    <Col xs={12} >
+                                    <Col lg={12} md={12} xs={24} className="show-col">
                                         <ControlLabel>CPF:</ControlLabel>
-                                        <Input required style={{ width: 220 }} name="cpf" id="cpf" onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
+                                        <Input required name="cpf" id="cpf" onKeyPress={() => FormatMask("###.###.###-##", "cpf")} maxLength="14" type="text" onChange={value => setCpf(value)}/>
                                     </Col>
 
-                                    <Col xs={12} >
+                                    <Col lg={12} md={12} xs={24} className="show-col">
                                         <ControlLabel>E-mail:</ControlLabel>
-                                        <Input required style={{ width: 220 }} name="email" type="email" onChange={value => setEmail(value)}/>
-                                    </Col>
-                                </Row>
-
-                                <Row className="show-row" gutter={16}>
-                                    <Col xs={12} >
-                                        <ControlLabel>Senha:</ControlLabel>
-                                        <Input required style={{ width: 220 }} name="senha" type="password" onChange={value => setSenha(value)}/>
-                                    </Col>
-
-                                    <Col xs={12} >
-                                        <ControlLabel>Confirmar Senha:</ControlLabel>
-                                        <FormControl style={{ width: 220 }} errorMessage={errorMessage} name="confSenha" type="password" onChange={value => setConfSenha(value)}/>
+                                        <Input required name="email" type="email" onChange={value => setEmail(value)}/>
                                     </Col>
                                 </Row>
                             </Col>
                         </Row>
 
+                        <Row className="show-row" gutter={16}>
+                            <Col lg={12} md={12} xs={24} className="show-col">
+                                <ControlLabel>Senha:</ControlLabel>
+                                <Input required name="senha" type="password" onChange={value => setSenha(value)}/>
+                            </Col>
+
+                            <Col lg={12} md={12} xs={24} className="show-col">
+                                <ControlLabel>Confirmar Senha:</ControlLabel>
+                                <FormControl errorMessage={errorMessage} name="confSenha" type="password" onChange={value => setConfSenha(value)}/>
+                            </Col>
+                        </Row>
+
                         <Row className="show-row">
                             <Row className="show-row">
-                                <Col xs={10} >
+                                <Col lg={14} md={14} className="show-col">
                                     <ControlLabel>Endereço:</ControlLabel>
                                     <Input required name="endereco" type="text" onChange={value => setEndereco(value)}/>
                                 </Col>
 
-                                <Col xs={4} >
+                                <Col lg={10} md={10} className="show-col">
                                     <ControlLabel>Numero:</ControlLabel>
-                                    <Input required name="numero" style={{ width: 100 }} type="number" onChange={value => setNumeroCasa(value)}/>
+                                    <Input required name="numero" type="number" onChange={value => setNumeroCasa(value)}/>
                                 </Col>
 
-                                <Col xs={10} >
+                            </Row>
+
+                            <Row className="show-row" >
+                                <Col lg={14} md={14} className="show-col">
                                     <ControlLabel>Complemento:</ControlLabel>
                                     <Input required name="complemento" type="text" onChange={value => setComplemento(value)}/>
                                 </Col>
+
+                                <Col lg={10} md={10} className="show-col">
+                                    <ControlLabel>CEP:</ControlLabel>
+                                    <Input required name="cep" type="text" id="cep" onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
+                                </Col>
                             </Row>
 
-                            <Row className="show-row" gutter={25}>
-                                <Col xs={4} >
-                                    <ControlLabel>CEP:</ControlLabel>
-                                    <Input required name="cep" type="text" style={{ width: 100 }} id="cep" onKeyPress={() => FormatMask("#####-###", "cep")} maxLength="9" onChange={value => setCep(value)}/>
-                                </Col>
-
-                                <Col xs={10} >
+                            <Row className="show-row" >
+                                <Col lg={12} md={12} className="show-col">
                                     <p>Estado:</p>
-                                    <InputPicker required name="estado" data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35, width: 250 }} onSelect={value => setIdUf(value)}/>
+                                    <InputPicker required name="estado" data={uf} labelKey="nome" valueKey="id" type="text" placeholder="Estado" style={{ height: 35 }} onSelect={value => setIdUf(value)}/>
                                 </Col>
 
-                                <Col xs={10} >
+                                <Col lg={12} md={12} className="show-col col-ajust">
                                     <p>Municipio:</p>
-                                    <InputPicker required name="municipio" disabled={idUf === undefined} data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35, width: 250 }} onSelect={value => setIdMunicipio(value)}/>
+                                    <InputPicker required name="municipio" disabled={idUf === undefined} data={municipio} labelKey="nome" valueKey="id" placeholder="Municipio" type="text" style={{ height: 35 }} onSelect={value => setIdMunicipio(value)}/>
                                 </Col>
                             </Row>
                         </Row>
 
                         <Row className="show-row">
                             <Row className="show-row">
-                                <Col xs={12} >
+                                <Col lg={14} md={14} className="show-col col-ajust-only">
                                     <ControlLabel>Titular do Cartão:</ControlLabel>
                                     <Input required name="titular-cartao" type="text" onChange={value => setTitularCartao(value)}/>
                                 </Col>
 
-                                <Col xs={12} >
+                                <Col lg={10} md={10} className="show-col col-ajust-only">
                                     <p>Validade:</p>
-                                    <DatePicker name="validade-cartao" className="validade-cartao" format="MM/YY" style={{ width: 110 }} onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
+                                    <DatePicker name="validade-cartao" className="validade-cartao" format="MM/YY" onChange={(value) => setValidadeCartao(format(new Date(value), 'MM/yyyy'))}/>
                                 </Col>
                             </Row>
 
                             <Row className="show-row">
-                                <Col xs={12} >
+                                <Col lg={14} md={14} className="show-col col-ajust">
                                     <ControlLabel>Numero do Cartão:</ControlLabel>
                                     <Input required name="numero-cartao" type="text" id="num-cartao" onKeyPress={() => FormatMask("#### #### #### ####", "num-cartao")} maxLength="19" onChange={value => setNumeroCartao(value)}/>
                                 </Col>
 
-                                <Col xs={12} >
+                                <Col lg={10} md={10} className="show-col">
                                     <ControlLabel>CSV:</ControlLabel>
-                                    <Input name="csv" required style={{ width: 110 }} maxLength="3" onChange={value => setCsvCartao(value)}/>
+                                    <Input name="csv" required maxLength="3" onChange={value => setCsvCartao(value)}/>
                                 </Col>
                             </Row>
                         </Row>
