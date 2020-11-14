@@ -3,6 +3,8 @@ import { Link, useHistory } from 'react-router-dom';
 import api from '../../api';
 import { Form, FormGroup, FormControl, ControlLabel, Button, Alert, Loader } from 'rsuite';
 import './styles.css';
+import Icone from '../../Assets/Icone.png';
+
 
 export default function Login() {
     const [email, setEmail] = useState();
@@ -36,6 +38,7 @@ export default function Login() {
            <div id="painel-login">
                <Form id="form-login" onSubmit={handleSubmit}>
                     <h1>TariFace</h1>
+                    <img src={Icone} alt=""/>
                     <FormGroup className="grupo-form-login">
                         <ControlLabel>E-mail:</ControlLabel>
                         <FormControl name="email" type="email" onChange={value => setEmail(value)}/>

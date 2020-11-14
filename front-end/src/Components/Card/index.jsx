@@ -23,7 +23,7 @@ export default function Card(props) {
         <Popover title="Excluir cartão ?">
             <Button onClick={excluirCartao} size="xs" color="red">Confirmar</Button>
         </Popover>
-        );
+    );
 
     async function handleSubmitCard(event) {
         event.preventDefault();

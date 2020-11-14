@@ -90,13 +90,8 @@ img.img-usuario { /* Imagem navbar */
   background-color: transparent;
 }
 
-.show-row {
-  /* border: 1px red dashed; */
+.space-col { /* Espaço entre as Cols */
   margin-bottom: 10px;
-}
-
-.show-col {
-  /* border: 1px blue solid; */
 }
 
 #modal-edital-perfil {
