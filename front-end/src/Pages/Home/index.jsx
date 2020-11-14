@@ -16,8 +16,9 @@ export default function Home() {
 
     //#region Constantes
     const { Column, HeaderCell, Cell } = Table;
-    const [modalCartao, setModalCartao] = useState(false);
     const [usuario, setUsuario] = useState()
+    const [modalCartao, setModalCartao] = useState(false);
+    const [modalClose, setModalClose] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [modalImagens, setModalImagens] = useState(false);
     const [fotoPerfil, setFotoPerfil] = useState(User);
@@ -208,8 +209,12 @@ export default function Home() {
     }
 
     function closeModalCartao() { setModalCartao(false) }
-
+    
     function openModalCartao() { setModalCartao(true) }
+
+    function closeModalClose() { setModalClose(false) }
+
+    function openModalClose() { setModalClose(true) }
 
     function closeModalImagens() { setModalImagens(false) }
 
@@ -244,7 +249,7 @@ export default function Home() {
                     <Dropdown menuStyle={{ 'margin-left': -50, border: '4px solid #ddd' }} icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
                         <Dropdown.Item onSelect={openModalCartao}><FiCreditCard/> Add Cartão</Dropdown.Item>
-                        <Dropdown.Item onSelect={logoff}><FiLogOut/> Sair</Dropdown.Item>
+                        <Dropdown.Item onSelect={openModalClose}><FiLogOut/> Sair</Dropdown.Item>
                     </Dropdown>
                </div>
            </header>
@@ -410,6 +415,23 @@ export default function Home() {
                     <Button onClick={handleAddCard} appearance="primary">Salvar</Button>
                     <Button onClick={closeModalCartao} appearance="subtle">Cancelar</Button>
                 </Modal.Footer>
+            </Modal>
+
+            <Modal size="xs" show={modalClose} onHide={closeModalClose}>
+
+                <Modal.Header>
+                    <Modal.Title>Deseja Sair?</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    Deseja realmente sair da aplicação?
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button onClick={logoff} color="red">Sair</Button>
+                    <Button onClick={closeModalClose} appearance="subtle">Cancelar</Button>
+                </Modal.Footer>
+
             </Modal>
 
             <Modal show={modalImagens} onHide={closeModalImagens} backdrop="static">
