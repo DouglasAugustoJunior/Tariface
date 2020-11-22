@@ -101,7 +101,7 @@ export default function Card(props) {
             <DatePicker placeholder={format(new Date(props.validade), 'MM/yyyy')} style={{ width: 150 }} disabled/>
 
             <div className="buttons-card">
-                <Button onClick={openModalSaldo} className="novo-cartao" >Add Saldo</Button>
+                <Button onClick={openModalSaldo} className="novo-cartao" >Adicionar Crédito</Button>
                 <Button onClick={openModalEditar} className="editar-cartao" >Editar</Button>
             </div>
 

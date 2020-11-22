@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {FiCreditCard, FiEdit, FiLogOut, FiBarChart2} from 'react-icons/fi';
 import {useHistory} from 'react-router-dom';
 import FormatMask from '../../Utils/FormatMask';
+import FormatMoney from '../../Utils/FormatMoney';
 import { format } from 'date-fns';
 import api from '../../api';
 import { Table, Dropdown, Modal, Form, ControlLabel, FormControl, Button, InputPicker, DatePicker, Grid, Row, Col, Input, Alert } from 'rsuite';
@@ -56,7 +57,7 @@ export default function Home() {
         api.get(`usuario/pegaUsuarioPorID?idUsuario=${id}`)
         .then(response => {
             const getNome        = response.data.nome;
-            const getSaldo       = response.data.saldo;
+            const getSaldo       = FormatMoney(response.data.saldo);
             const getCartoes     = response.data.cartoes;
             const getSenha       = response.data.senha;
             const getCpf         = response.data.cpf;
@@ -72,7 +73,7 @@ export default function Home() {
             const getHistorico   = response.data.historico.map(tsc => {
                 return {
                     data: format(new Date(tsc.dataCriacao), 'dd/MM/yy hh:mm'),
-                    transacao: `Efetuado ${tsc.tipo.nome} de R$: ${tsc.valor.toString().replace(".", ",")}`
+                    transacao: `Efetuado ${tsc.tipo.nome} de R$: ${FormatMoney(tsc.valor)}`
                 }
             });
 
@@ -244,7 +245,7 @@ export default function Home() {
                <div className="info-usuario">
                    <div className="textos-usuario">
                         <span className="nome-usuario"> {nome} </span>
-                        <span className="negrito"> Saldo R${saldo} </span>
+                        <span className="negrito"> Saldo R$: {saldo} </span>
                    </div>
                     <Dropdown menuStyle={{ 'margin-left': -50, border: '4px solid #ddd' }} icon={<img src={fotoPerfil} alt="" className="img-usuario"/>} >
                         <Dropdown.Item onSelect={openModalEditar}><FiEdit/> Editar Perfil</Dropdown.Item>
@@ -310,12 +311,12 @@ export default function Home() {
 
                         <Row gutter={16}>
 
-                            <Col className="space-col" xs={24} sm={24} md={6} lg={6} className="field-photo"> {/* Imagem Perfil */}
+                            <Col className="space-col field-photo" xs={24} sm={24} md={6} lg={6} > {/* Imagem Perfil */}
                                 <SimpleDropzone onFileUpload={setFotoPerfil}/>
-                                <p>foto de perfil</p>
+                                <p>Foto de Perfil</p>
                             </Col>
 
-                            <Col className="space-col" xs={24} sm={24} md={12} lg={9}>{/* Nome Completo */}
+                            <Col className="space-col" xs={24} sm={24} md={12} lg={9}> {/* Nome Completo */}
                                 <ControlLabel>Nome Completo:</ControlLabel>
                                 <Input value={nome} id="input_nome" type="text" onChange={value => setNome(value)}/>
                             </Col>
